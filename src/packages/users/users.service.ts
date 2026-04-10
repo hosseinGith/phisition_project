@@ -44,9 +44,9 @@ export class UsersService {
     );
    throw new NotFoundException();
   } catch (error) {
-   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
    if (
     error instanceof QueryFailedError &&
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     error.driverError?.code === 'ER_DUP_ENTRY'
    ) {
     throw new ConflictException(
