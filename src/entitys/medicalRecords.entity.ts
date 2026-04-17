@@ -16,7 +16,6 @@ export class MedicalRecords {
  @Column({ default: null })
  doctorId: number;
  @Column({
-  length: 50,
   type: 'enum',
   enum: RecordTypeMedicalRecordsEnum,
  })

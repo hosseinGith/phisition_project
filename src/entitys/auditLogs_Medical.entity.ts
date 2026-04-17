@@ -17,7 +17,6 @@ export class AuditLogs_Medical {
  @Column()
  patientId: number;
  @Column({
-  length: 20,
   type: 'enum',
   enum: AccessTypeAuditLogs_MedicalEnum,
  })

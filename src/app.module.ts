@@ -13,7 +13,6 @@ import { Appointments } from './entitys/appointments.entity';
 import { AuditLogs_Medical } from './entitys/auditLogs_Medical.entity';
 import { MedicalRecords } from './entitys/medicalRecords.entity';
 import { Prescriptions } from './entitys/prescriptions.entity';
-import { AppointmentsModule } from './packages/appointments/appointments.module';
 dotenv.config();
 
 @Module({
@@ -46,7 +45,6 @@ dotenv.config();
    ],
    synchronize: true,
   }),
-  AppointmentsModule,
  ],
  controllers: [AppController],
  providers: [
