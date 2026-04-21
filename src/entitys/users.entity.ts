@@ -13,6 +13,11 @@ export class Users {
  @PrimaryGeneratedColumn()
  id: number;
  @Column()
+ first_name: string;
+ @Column()
+ last_name: string;
+
+ @Column()
  @Unique('username', [])
  username: string;
  @Column()
@@ -23,7 +28,7 @@ export class Users {
  @IsEnum(AccessType)
  access: AccessType;
  @Column({ default: true, type: 'boolean' })
- isActive: boolean;
+ is_active: boolean;
  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
- createdAt: Date;
+ created_at: Date;
 }
