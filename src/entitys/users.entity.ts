@@ -16,4 +16,6 @@ export class Users {
  @Column({ default: 'user' })
  @IsEnum(AccessType)
  access: AccessType;
+ @Column({ default: true, type: 'bit' })
+ isActive: number;
 }

@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UsersModule } from './packages/users/users.module';
+import { UsersModule } from './modules/users/users.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthModule } from './packages/auth/auth.module';
+import { AuthModule } from './modules/auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Users } from './entitys/users.entity';
 import dotenv from 'dotenv';
@@ -13,6 +13,8 @@ import { Appointments } from './entitys/appointments.entity';
 import { AuditLogs_Medical } from './entitys/auditLogs_Medical.entity';
 import { MedicalRecords } from './entitys/medicalRecords.entity';
 import { Prescriptions } from './entitys/prescriptions.entity';
+import { AppointmentsModule } from './modules/appointments/appointments.module';
+import { AuditLogs_MedicalModule } from './modules/auditLogs_Medical/auditLogs_Medical.module';
 dotenv.config();
 
 @Module({
@@ -45,6 +47,8 @@ dotenv.config();
    ],
    synchronize: true,
   }),
+  AppointmentsModule,
+  AuditLogs_MedicalModule,
  ],
  controllers: [AppController],
  providers: [

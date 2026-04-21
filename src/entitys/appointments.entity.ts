@@ -45,6 +45,6 @@ export class Appointments {
  @Column({ type: 'datetime' })
  createdAt: string;
  // یادآوری ارسال شده؟
- @Column({ type: 'datetime' })
- reminderSent: string;
+ @Column({ type: 'bit' })
+ reminderSent: number;
 }

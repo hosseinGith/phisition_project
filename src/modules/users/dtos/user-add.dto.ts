@@ -1,4 +1,9 @@
-import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+ IsEnum,
+ IsNotEmpty,
+ IsOptional,
+ IsString,
+} from 'class-validator';
 import { AccessType } from 'src/types';
 
 export default class UserDtoAdd {

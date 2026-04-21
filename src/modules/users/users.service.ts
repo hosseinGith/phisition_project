@@ -10,12 +10,20 @@ import { FindOptionsWhere, QueryFailedError, Repository } from 'typeorm';
 import UserDtoAdd from './dtos/user-add.dto';
 import addUser from 'src/shared/utils/add-user';
 import UserUpdateDto from './dtos/user-update.dto';
+import { AccessType } from 'src/types';
 @Injectable()
 export class UsersService {
  constructor(
   @InjectRepository(Users)
   private usersRepository: Repository<Users>,
  ) {}
+
+ async findActiveDoctors() {
+  return await this.usersRepository.findOneBy({
+   access: AccessType.Doctor,
+   isActive: 1,
+  });
+ }
  async get(id?: number) {
   let res: FindOptionsWhere<Users> | FindOptionsWhere<Users>[] | null;
   if (!Number.isNaN(id)) {

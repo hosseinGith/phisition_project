@@ -1,6 +1,6 @@
 import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import UserDtoAdd from 'src/packages/users/dtos/user-add.dto';
+import UserDtoAdd from 'src/modules/users/dtos/user-add.dto';
 @Injectable()
 export class PasswordPipe implements PipeTransform {
  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents, @typescript-eslint/no-unused-vars

@@ -37,5 +37,5 @@ export class MedicalRecords {
  uploadedAt: string;
  // تایید شده توسط پزشک؟
  @Column({ type: 'bit' })
- isVerified: string;
+ isVerified: number;
 }
