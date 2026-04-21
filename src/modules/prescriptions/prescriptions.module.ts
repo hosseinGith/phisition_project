@@ -2,11 +2,11 @@ import { Module } from '@nestjs/common';
 import { PrescriptionsService } from './prescriptions.service';
 import { PrescriptionsController } from './prescriptions.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Appointments } from 'src/entitys/appointments.entity';
 import { Users } from 'src/entitys/users.entity';
+import { Prescriptions } from 'src/entitys/prescriptions.entity';
 
 @Module({
- imports: [TypeOrmModule.forFeature([Appointments, Users])],
+ imports: [TypeOrmModule.forFeature([Prescriptions, Users])],
  providers: [PrescriptionsService],
  controllers: [PrescriptionsController],
 })
