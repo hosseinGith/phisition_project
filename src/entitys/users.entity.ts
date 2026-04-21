@@ -17,8 +17,8 @@ export class Users {
  username: string;
  @Column()
  password: string;
- @Column({ length: 10 })
- nationalId: string;
+ @Column({ length: 10, unique: true })
+ national_id: string;
  @Column({ default: 'user' })
  @IsEnum(AccessType)
  access: AccessType;

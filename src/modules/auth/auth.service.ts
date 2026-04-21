@@ -6,7 +6,6 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import SignInDto from './dtos/signin.dto';
-import addUser from 'src/shared/utils/add-user';
 @Injectable()
 export class AuthService {
  constructor(
@@ -28,7 +27,14 @@ export class AuthService {
   return token;
  }
  async registery(body: SignInDto) {
-  const user = await addUser(this.usersRepository, body);
+  if (await this.usersRepository.findOneBy({ username: body?.username }))
+   throw new BadRequestException(
+    'این نام کاربری استفاده شده است. لطفاً نام کاربری دیگری انتخاب کنید.',
+    'username',
+   );
+  const create_status = this.usersRepository.create(body);
+  const user = await this.usersRepository.save(create_status);
+
   if (!('username' in user) || !('id' in user)) return;
   const token = this.jwtService.sign(
    { id: user.id, username: user.username },

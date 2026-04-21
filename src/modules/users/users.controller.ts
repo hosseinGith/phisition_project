@@ -40,14 +40,13 @@ export class UsersController {
   return this.users.get();
  }
 
-//  @UseGuards(new AccessGuard([AccessType.ADMIN]))
+ //  @UseGuards(new AccessGuard([AccessType.ADMIN]))
  @Post()
  add(@Body(PasswordPipe) body: UserDtoAdd) {
   return this.users.add(body);
  }
- @UseGuards(new AccessGuard([AccessType.ADMIN]))
  @Patch(':id')
- @UseGuards(new AccessGuard([AccessType.ADMIN]))
+ //  @UseGuards(new AccessGuard([AccessType.ADMIN]))
  update(@Param('id') id: number, @Body(PasswordPipe) body: UserUpdateDto) {
   return this.users.update(id, body);
  }

@@ -1,6 +1,5 @@
 import {
  BadRequestException,
- ConflictException,
  Injectable,
  NotFoundException,
 } from '@nestjs/common';
@@ -8,7 +7,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from 'src/entitys/users.entity';
 import { FindOptionsWhere, QueryFailedError, Repository } from 'typeorm';
 import UserDtoAdd from './dtos/user-add.dto';
-import addUser from 'src/shared/utils/add-user';
 import UserUpdateDto from './dtos/user-update.dto';
 import { AccessType } from 'src/types';
 @Injectable()
@@ -21,7 +19,7 @@ export class UsersService {
  async findActiveDoctors() {
   return await this.usersRepository.findOneBy({
    access: AccessType.DOCTOR,
-   isActive:true,
+   isActive: true,
   });
  }
  async get(id?: number) {
@@ -33,38 +31,42 @@ export class UsersService {
   throw new NotFoundException();
  }
  async add(body: UserDtoAdd) {
-  return await addUser(this.usersRepository, body);
+  if (await this.usersRepository.findOneBy({ username: body?.username }))
+   throw new BadRequestException(
+    'این نام کاربری استفاده شده است. لطفاً نام کاربری دیگری انتخاب کنید.',
+    'username',
+   );
+  if (body?.national_id)
+   if (await this.usersRepository.findOneBy({ national_id: body.national_id }))
+    throw new BadRequestException('این کد ملی استفاده شده است.', 'national_id');
+  const create_status = this.usersRepository.create(body);
+  const user = await this.usersRepository.save(create_status);
+  return user;
  }
  async update(id: number, body: UserUpdateDto) {
-  try {
-   if (!id) throw new BadRequestException('', 'id');
-
-   const user = await this.usersRepository.findOneBy({ id });
-   const fieldsToUpdate = Object.keys(body).length;
-
-   if (fieldsToUpdate === 0) {
-    throw new BadRequestException('هیچ فیلدی برای به‌روزرسانی ارسال نشده است.');
-   }
-
-   if (user)
-    return (
-     (await this.usersRepository.update({ id: user.id }, body)).affected === 1
-    );
-   throw new NotFoundException();
-  } catch (error) {
-   if (
-    error instanceof QueryFailedError &&
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    error.driverError?.code === 'ER_DUP_ENTRY'
-   ) {
-    throw new ConflictException(
-     'این نام کاربری قبلاً استفاده شده است. لطفاً نام کاربری دیگری انتخاب کنید.',
+  if (!id) throw new BadRequestException('', 'id');
+  if (body?.username)
+   if (await this.usersRepository.findOneBy({ username: body?.username }))
+    throw new BadRequestException(
+     'این نام کاربری استفاده شده است. لطفاً نام کاربری دیگری انتخاب کنید.',
      'username',
     );
-   } else {
-    throw error;
-   }
+  if (body?.national_id)
+   if (await this.usersRepository.findOneBy({ national_id: body.national_id }))
+    throw new BadRequestException('این کد ملی استفاده شده است.', 'national_id');
+
+  const user = await this.usersRepository.findOneBy({ id });
+  const fieldsToUpdate = Object.keys(body).length;
+
+  if (fieldsToUpdate === 0) {
+   throw new BadRequestException('هیچ فیلدی برای به‌روزرسانی ارسال نشده است.');
   }
+
+  if (user)
+   return (
+    (await this.usersRepository.update({ id: user.id }, body)).affected === 1
+   );
+  throw new NotFoundException();
  }
  async delete(id: number) {
   if (!id) throw new BadRequestException('id not found', 'id');
