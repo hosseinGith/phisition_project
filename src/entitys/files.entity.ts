@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Users } from './users.entity';
 enum UseTypeEnum {
  CONVERSITION = 'conversition',
  ADMINUPLOAD = 'adminUpload',
@@ -20,4 +21,6 @@ export class Files {
  use_type: string;
  @Column()
  type: string;
+ @ManyToOne(() => Users, (user) => user)
+ user: Users;
 }

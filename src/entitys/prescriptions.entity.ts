@@ -1,4 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Patients } from './patients.entity';
+import { Doctors } from './doctors.entity';
+import { Appointments } from './appointments.entity';
 export enum StatusPrescriptions {
  ACTIVE = 'active',
  DISPENSED = 'dispensed',
@@ -10,14 +13,15 @@ export class Prescriptions {
  @PrimaryGeneratedColumn()
  id: number;
  // ارجاع به Patients
- @Column()
- patien_i: number;
+ @ManyToOne(() => Patients, (patient) => patient.prescriptions)
+ patient: Patients;
  // ارجاع به Doctors
- @Column()
- doctor_id: number;
+ @ManyToOne(() => Doctors, (doctor) => doctor.prescriptions)
+ doctor: Doctors;
+
  // ارجاع به Appointments (NULL اگر مشاوره آنلاین)
- @Column()
- appointment_id: number;
+ @ManyToOne(() => Appointments, (appointment) => appointment.prescriptions)
+ appointment: Appointments;
  // تاریخ تجویز
  @Column({ type: 'date' })
  issue_date: string;

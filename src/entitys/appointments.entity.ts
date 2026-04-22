@@ -3,7 +3,12 @@ import {
  PrimaryGeneratedColumn,
  Column,
  CreateDateColumn,
+ ManyToOne,
+ OneToMany,
 } from 'typeorm';
+import { Patients } from './patients.entity';
+import { Doctors } from './doctors.entity';
+import { Prescriptions } from './prescriptions.entity';
 export enum StatusAppointmentsEnum {
  SCHEDULED = 'scheduled',
  COMPLETED = 'completed',
@@ -20,11 +25,15 @@ export class Appointments {
  @PrimaryGeneratedColumn()
  id: number;
  // ارجاع به Patients
- @Column()
- patient_id: number;
+
+ @ManyToOne(() => Patients, (patient) => patient.appointments)
+ patient: Patients;
  // ارجاع به Doctors
- @Column()
- doctor_id: number;
+ @ManyToOne(() => Doctors, (doctor) => doctor.appointments)
+ doctor: Doctors;
+ @OneToMany(() => Prescriptions, (prescription) => prescription.appointment)
+ prescriptions: Prescriptions[];
+
  // تاریخ نوبت
  @Column({ type: 'date' })
  appointment_date: string;

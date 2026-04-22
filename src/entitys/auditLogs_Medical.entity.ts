@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
+import {
+ Entity,
+ PrimaryGeneratedColumn,
+ Column,
+ CreateDateColumn,
+ ManyToOne,
+} from 'typeorm';
+import { Patients } from './patients.entity';
+import { Users } from './users.entity';
 export enum AccessTypeAuditLogs_MedicalEnum {
  VIEW = 'view',
  EDIT = 'edit',
@@ -11,11 +19,14 @@ export class AuditLogs_Medical {
  @PrimaryGeneratedColumn()
  id: number;
  // چه کسی دسترسی داشته
- @Column()
- accessed_by_user_id: number;
+ @ManyToOne(() => Users, (user) => user.auditLogs_Medicals)
+ accessed_by: Users;
+
  // پرونده چه بیماری دیده شده
- @Column()
- patient_id: number;
+ @ManyToOne(() => Patients, (patient) => patient.auditLogs_Medical)
+ patient: Patients;
+ // ارجاع به Doctors
+
  @Column({
   type: 'enum',
   enum: AccessTypeAuditLogs_MedicalEnum,

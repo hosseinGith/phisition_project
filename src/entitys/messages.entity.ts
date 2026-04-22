@@ -3,7 +3,13 @@ import {
  PrimaryGeneratedColumn,
  Column,
  CreateDateColumn,
+ ManyToOne,
+ OneToOne,
+ JoinColumn,
 } from 'typeorm';
+import { Users } from './users.entity';
+import { Conversitions } from './conversitions.entity';
+import { Files } from './files.entity';
 export enum FileTypeEnum {
  TEXT = 'text',
  IMAGE = 'image',
@@ -13,10 +19,10 @@ export enum FileTypeEnum {
 export class Messages {
  @PrimaryGeneratedColumn()
  id: number;
- @Column()
- senderId: number;
- @Column()
- conversitionId: number;
+ @ManyToOne(() => Users, (user) => user.messages)
+ sender: Users;
+ @ManyToOne(() => Conversitions, (conversition) => conversition.messages)
+ conversition: Conversitions;
  @Column({ length: 2000 })
  content: string;
  @Column({
@@ -25,12 +31,11 @@ export class Messages {
   enumName: 'FileType',
  })
  type: string;
- @Column({ default: null })
- fileURL: string;
- @Column({ default: null })
- fileSize: string;
- @Column({ default: null })
- replyToId: number;
+ @OneToOne(() => Messages, (message) => message)
+ @JoinColumn()
+ replyToMessage: Messages;
+ @ManyToOne(() => Files)
+ file: Files;
  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
  created_at: Date;
  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

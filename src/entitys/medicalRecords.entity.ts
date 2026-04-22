@@ -1,4 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Doctors } from './doctors.entity';
+import { Patients } from './patients.entity';
 export enum RecordTypeMedicalRecordsEnum {
  LABRESULT = 'labResult',
  RADIOLOGY = 'radiology',
@@ -10,11 +12,11 @@ export class MedicalRecords {
  @PrimaryGeneratedColumn()
  id: number;
  // ارجاع به Patients
- @Column()
- patient_id: number;
+ @ManyToOne(() => Patients, (patient) => patient.medicalRecords)
+ patient: Patients;
  // پزشک ثبت‌کننده (NULL اگر بیمار خودش آپلود کند)
- @Column({ default: null })
- doctor_id: number;
+ @ManyToOne(() => Doctors, (doctor) => doctor.medicalRecords)
+ doctor: Doctors;
  @Column({
   type: 'enum',
   enum: RecordTypeMedicalRecordsEnum,

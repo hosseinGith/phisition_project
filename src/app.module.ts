@@ -73,7 +73,9 @@ dotenv.config();
    AuditLogs_Medical,
    MedicalRecords,
    Prescriptions,
+   MedicalRecords,
   ]),
+  
   AppointmentsModule,
   AuditLogs_MedicalModule,
   PrescriptionsModule,
