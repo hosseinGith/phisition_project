@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -15,7 +16,6 @@ import { MedicalRecords } from './entitys/medicalRecords.entity';
 import { Prescriptions } from './entitys/prescriptions.entity';
 import { AppointmentsModule } from './modules/appointments/appointments.module';
 import { AuditLogs_MedicalModule } from './modules/auditLogs_Medical/auditLogs_Medical.module';
-import 'reflect-metadata';
 import { PrescriptionsModule } from './modules/prescriptions/prescriptions.module';
 import { Patients } from './entitys/patients.entity';
 import { Rates } from './entitys/rates.entity';
