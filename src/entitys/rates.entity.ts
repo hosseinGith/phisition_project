@@ -1,30 +1,15 @@
-import {
- Entity,
- PrimaryGeneratedColumn,
- Column,
- OneToMany,
- JoinColumn,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { Doctors } from './doctors.entity';
-import { Users } from './users.entity';
+import { Patients } from './patients.entity';
 
 @Entity()
 export class Rates {
  @PrimaryGeneratedColumn()
  id: number;
- @OneToMany(() => Doctors, (doctor) => doctor.rates)
- @JoinColumn({ name: 'doctor_id' })
- @Column()
- doctors: Doctors;
-
- @Column({ default: null })
- doctor_id: string;
- @Column()
- @OneToMany(() => Users, (user) => user.rates)
- @JoinColumn({ name: 'doctor_id' })
- users: Users;
- @Column({ default: null })
- user_id: number;
+ @ManyToOne(() => Doctors, (doctor) => doctor.rates)
+ doctor: Doctors;
+ @ManyToOne(() => Patients, (patient) => patient.rates)
+ patient: Patients;
  @Column()
  rate: number;
  @Column()

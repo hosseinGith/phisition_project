@@ -11,6 +11,7 @@ export class Files {
  @Column()
  url: string;
  @Column({
+  type: 'enum',
   enum: UseTypeEnum,
   enumName: 'UseType',
   default: UseTypeEnum.CONVERSITION,

@@ -15,7 +15,14 @@ import { MedicalRecords } from './entitys/medicalRecords.entity';
 import { Prescriptions } from './entitys/prescriptions.entity';
 import { AppointmentsModule } from './modules/appointments/appointments.module';
 import { AuditLogs_MedicalModule } from './modules/auditLogs_Medical/auditLogs_Medical.module';
+import 'reflect-metadata';
 import { PrescriptionsModule } from './modules/prescriptions/prescriptions.module';
+import { Patients } from './entitys/patients.entity';
+import { Rates } from './entitys/rates.entity';
+import { Doctors } from './entitys/doctors.entity';
+import { Files } from './entitys/files.entity';
+import { Messages } from './entitys/messages.entity';
+import { Conversitions } from './entitys/conversitions.entity';
 dotenv.config();
 
 @Module({
@@ -41,6 +48,12 @@ dotenv.config();
    database: process.env?.db_database,
    entities: [
     Users,
+    Patients,
+    Rates,
+    Doctors,
+    Files,
+    Messages,
+    Conversitions,
     Appointments,
     AuditLogs_Medical,
     MedicalRecords,
@@ -48,6 +61,19 @@ dotenv.config();
    ],
    synchronize: true,
   }),
+  TypeOrmModule.forFeature([
+   Users,
+   Patients,
+   Rates,
+   Doctors,
+   Files,
+   Messages,
+   Conversitions,
+   Appointments,
+   AuditLogs_Medical,
+   MedicalRecords,
+   Prescriptions,
+  ]),
   AppointmentsModule,
   AuditLogs_MedicalModule,
   PrescriptionsModule,

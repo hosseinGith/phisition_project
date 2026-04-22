@@ -10,19 +10,15 @@ import {
 } from 'typeorm';
 import { Doctors } from './doctors.entity';
 import { Patients } from './patients.entity';
-import { Rates } from './rates.entity';
 
 @Entity()
 export class Users {
  @PrimaryGeneratedColumn()
  id: number;
- @OneToMany(() => Doctors, (doctor) => doctor.users)
- doctors: Doctors;
- @OneToMany(() => Patients, (patient) => patient.users)
- patients: Patients;
- @Column()
- @OneToMany(() => Rates, (rate) => rate.users)
- rates: Rates;
+ @OneToMany(() => Doctors, (doctor) => doctor.user)
+ doctors: Doctors[];
+ @OneToMany(() => Patients, (patient) => patient.user)
+ patients: Patients[];
  @Column()
  first_name: string;
  @Column()

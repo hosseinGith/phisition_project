@@ -3,7 +3,7 @@ import {
  PrimaryGeneratedColumn,
  Column,
  OneToMany,
- JoinColumn,
+ ManyToOne,
 } from 'typeorm';
 import { Users } from './users.entity';
 import { Rates } from './rates.entity';
@@ -13,14 +13,11 @@ export class Doctors {
  @PrimaryGeneratedColumn()
  id: number;
 
- @OneToMany(() => Users, (user) => user.doctors)
- @JoinColumn({ name: 'user_id' })
- users: Users;
- @OneToMany(() => Rates, (rate) => rate.doctors)
- rates: Rates;
+ @ManyToOne(() => Users, (user) => user.doctors)
+ user: Users;
+ @OneToMany(() => Rates, (rate) => rate.doctor)
+ rates: Rates[];
  // ارجاع به Users
- @Column({ unique: true })
- user_id: number;
  // تخصص (قلب، پوست، داخلی، ...)
  @Column()
  specialty: string;

@@ -19,7 +19,11 @@ export class Messages {
  conversitionId: number;
  @Column({ length: 2000 })
  content: string;
- @Column({ length: 2000, enum: FileTypeEnum, enumName: 'FileType' })
+ @Column({
+  type: 'enum',
+  enum: FileTypeEnum,
+  enumName: 'FileType',
+ })
  type: string;
  @Column({ default: null })
  fileURL: string;

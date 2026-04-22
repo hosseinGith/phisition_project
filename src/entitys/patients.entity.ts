@@ -1,18 +1,24 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import {
+ Entity,
+ PrimaryGeneratedColumn,
+ Column,
+ ManyToOne,
+ OneToMany,
+} from 'typeorm';
 import { Users } from './users.entity';
+import { Rates } from './rates.entity';
 
 @Entity()
 export class Patients {
  @PrimaryGeneratedColumn()
  id: number;
  // ارجاع به Users
- @Column()
- user_id: number;
- @OneToMany(() => Users, (user) => user.patients)
- @Column()
- users: Users;
+ @OneToMany(() => Rates, (rate) => rate.patient)
+ rates: Rates[];
+ @ManyToOne(() => Users, (user) => user.patients)
+ user: Users;
  // شماره پرونده (یکتا، مثل MR-۱۴۰۴-۱۲۳۴)
- @Column({ unique: true, default: () => 'gen_random_uuid()' })
+ @Column({ unique: true, default: () => 'UUID()' })
  medical_record_number: string;
  // گروه خونی
  @Column()
