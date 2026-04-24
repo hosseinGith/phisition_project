@@ -29,9 +29,6 @@ dotenv.config();
 
 @Module({
  imports: [
-  UsersModule,
-  AuthModule,
-
   ThrottlerModule.forRoot([
    {
     // min
@@ -80,7 +77,8 @@ dotenv.config();
    DoctorHours,
    MedicalRecords,
   ]),
-
+  UsersModule,
+  AuthModule,
   AppointmentsModule,
   AuditLogs_MedicalModule,
   PrescriptionsModule,
