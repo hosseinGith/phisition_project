@@ -23,6 +23,8 @@ import { Doctors } from './entitys/doctors.entity';
 import { Files } from './entitys/files.entity';
 import { Messages } from './entitys/messages.entity';
 import { Conversitions } from './entitys/conversitions.entity';
+import { OtpCodes } from './entitys/otpCodes.entity';
+import { DoctorHours } from './entitys/doctorHours.entity';
 dotenv.config();
 
 @Module({
@@ -58,6 +60,8 @@ dotenv.config();
     AuditLogs_Medical,
     MedicalRecords,
     Prescriptions,
+    OtpCodes,
+    DoctorHours,
    ],
    synchronize: true,
   }),
@@ -71,11 +75,12 @@ dotenv.config();
    Conversitions,
    Appointments,
    AuditLogs_Medical,
-   MedicalRecords,
    Prescriptions,
+   OtpCodes,
+   DoctorHours,
    MedicalRecords,
   ]),
-  
+
   AppointmentsModule,
   AuditLogs_MedicalModule,
   PrescriptionsModule,

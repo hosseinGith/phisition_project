@@ -4,8 +4,10 @@ import {
  Column,
  OneToOne,
  JoinColumn,
+ OneToMany,
 } from 'typeorm';
 import { Users } from './users.entity';
+import { DoctorHours } from './doctorHours.entity';
 
 @Entity()
 export class Doctors {
@@ -13,10 +15,11 @@ export class Doctors {
  id: number;
 
  // ارجاع به Users
- @OneToOne(() => Users)
+ @OneToOne(() => Users, (user) => user.doctor)
  @JoinColumn()
  user: Users;
-
+ @OneToMany(() => DoctorHours, (doctorHour) => doctorHour.doctor)
+ doctorHours: DoctorHours[];
  // تخصص (قلب، پوست، داخلی، ...)
  @Column()
  specialty: string;
@@ -29,10 +32,4 @@ export class Doctors {
  // بیوگرافی
  @Column()
  bio: string;
- // امتیاز از بیماران (۱ تا ۵)
- @Column()
- rating: string;
- // ساعات کاری هفتگی
- @Column()
- work_hours: string;
 }

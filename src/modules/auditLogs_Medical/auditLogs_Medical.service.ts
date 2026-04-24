@@ -5,7 +5,7 @@ import {
  NotFoundException,
 } from '@nestjs/common';
 
-import { FindOptionsWhere, QueryFailedError, Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 import { AuditLogs_Medical } from 'src/entitys/auditLogs_Medical.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import AuditLogs_MedicalDtoAdd from './dtos/auditLogs_Medical-add.dto';
@@ -17,15 +17,10 @@ export class AuditLogs_MedicalService {
   private AuditLogs_MedicalRep: Repository<AuditLogs_Medical>,
  ) {}
  async get(id?: number) {
-  let res:
-   | FindOptionsWhere<AuditLogs_Medical>
-   | FindOptionsWhere<AuditLogs_Medical>[]
-   | null;
   if (!Number.isNaN(id)) {
-   res = await this.AuditLogs_MedicalRep.findOneBy({ id });
-  } else res = await this.AuditLogs_MedicalRep.find();
-  if (res) return res;
-  throw new NotFoundException();
+   return await this.AuditLogs_MedicalRep.findOneBy({ id });
+  }
+  return await this.AuditLogs_MedicalRep.find();
  }
  async add(body: AuditLogs_MedicalDtoAdd) {
   try {
@@ -40,7 +35,7 @@ export class AuditLogs_MedicalService {
    ) {
     throw new ConflictException(
      'این نام کاربری قبلاً استفاده شده است. لطفاً نام کاربری دیگری انتخاب کنید.',
-     'username',
+     'number',
     );
    } else {
     throw error;
@@ -71,7 +66,7 @@ export class AuditLogs_MedicalService {
    ) {
     throw new ConflictException(
      'این نام کاربری قبلاً استفاده شده است. لطفاً نام کاربری دیگری انتخاب کنید.',
-     'username',
+     'number',
     );
    } else {
     throw error;

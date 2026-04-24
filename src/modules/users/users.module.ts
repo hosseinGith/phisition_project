@@ -3,11 +3,28 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Users } from 'src/entitys/users.entity';
-import { PublicModule } from './public/public.module';
+import { PatientController } from './patient/patient.controller';
+import { PatientService } from './patient/patient.service';
+import { PatientModule } from './patient/patient.module';
+import { Doctors } from 'src/entitys/doctors.entity';
+import { Patients } from 'src/entitys/patients.entity';
+import { DoctorHours } from 'src/entitys/doctorHours.entity';
+import { Appointments } from 'src/entitys/appointments.entity';
+import { DoctorModule } from './doctor/doctor.module';
 
 @Module({
- imports: [TypeOrmModule.forFeature([Users]), PublicModule],
- controllers: [UsersController],
- providers: [UsersService],
+ imports: [
+  TypeOrmModule.forFeature([
+   Users,
+   Doctors,
+   Patients,
+   DoctorHours,
+   Appointments,
+  ]),
+  PatientModule,
+  DoctorModule,
+ ],
+ controllers: [UsersController, PatientController],
+ providers: [UsersService, PatientService],
 })
 export class UsersModule {}

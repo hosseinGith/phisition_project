@@ -6,7 +6,7 @@ export enum AccessType {
  FINANCIAL_MANAGER="financialManager"
 }
 export interface TokenType {
- username: string;
+ number: string;
  id: number;
  iat: number;
 }

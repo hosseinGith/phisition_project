@@ -13,7 +13,7 @@ export class Patients {
  id: number;
  // ارجاع به Users
 
- @OneToOne(() => Users)
+ @OneToOne(() => Users, (user) => user.patient)
  @JoinColumn()
  user: Users;
  // شماره پرونده (یکتا، مثل MR-۱۴۰۴-۱۲۳۴)
@@ -22,7 +22,7 @@ export class Patients {
  // گروه خونی
  @Column()
  blood_type: string;
- // حساسیت‌های دارویی/غذایی (JSON)
+ // حساسیت‌های دارویی/غذایی
  @Column()
  allergies: string;
  // بیماری‌های مزمن

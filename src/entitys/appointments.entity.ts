@@ -5,15 +5,19 @@ import {
  CreateDateColumn,
  ManyToOne,
  OneToMany,
+ OneToOne,
 } from 'typeorm';
 import { Patients } from './patients.entity';
 import { Doctors } from './doctors.entity';
 import { Prescriptions } from './prescriptions.entity';
+import { DoctorHours } from './doctorHours.entity';
 export enum StatusAppointmentsEnum {
  SCHEDULED = 'scheduled',
  COMPLETED = 'completed',
  CANCELLED = 'cancelled',
  NOSHOW = 'noShow',
+ //  does not have time
+ TIME = 'time',
 }
 export enum VisitTypeAppointmentsEnum {
  INPERSON = 'inPerson',
@@ -36,10 +40,10 @@ export class Appointments {
 
  // تاریخ نوبت
  @Column({ type: 'date' })
- appointment_date: string;
+ appointment_date: Date;
  // ساعت نوبت
- @Column({ type: 'timestamp' })
- appointment_time: string;
+ @OneToOne(() => DoctorHours)
+ hour: DoctorHours;
  @Column({
   type: 'enum',
   enum: StatusAppointmentsEnum,

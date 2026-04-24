@@ -1,12 +1,16 @@
 import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Users } from 'src/entitys/users.entity';
+import { Doctors } from 'src/entitys/doctors.entity';
+import { Patients } from 'src/entitys/patients.entity';
+import { AuthService } from './auth.service';
+import { OtpCodes } from 'src/entitys/otpCodes.entity';
+import { CryptoHash } from 'src/shared/utils/cryptoHash.service';
 
 @Module({
- imports: [TypeOrmModule.forFeature([Users])],
+ imports: [TypeOrmModule.forFeature([Users, Patients, Doctors, OtpCodes])],
  controllers: [AuthController],
- providers: [AuthService],
+ providers: [AuthService, CryptoHash],
 })
 export class AuthModule {}

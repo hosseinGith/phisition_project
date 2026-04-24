@@ -56,7 +56,7 @@ export class AppointmentsService {
    ) {
     throw new ConflictException(
      'این نام کاربری قبلاً استفاده شده است. لطفاً نام کاربری دیگری انتخاب کنید.',
-     'username',
+     'number',
     );
    } else {
     throw error;

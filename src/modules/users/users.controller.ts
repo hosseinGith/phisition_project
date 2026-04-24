@@ -8,8 +8,9 @@ import {
  Post,
  UseGuards,
  UseInterceptors,
+ UsePipes,
 } from '@nestjs/common';
-import UserDtoAdd from './dtos/user-add.dto';
+import { AdminAddUser } from './dtos/user-add.dto';
 import { UsersService } from './users.service';
 import { PasswordPipe } from 'src/shared/pipe/password.pipe';
 import { PasswordInterceptor } from 'src/shared/interceptors/password.interceptor';
@@ -18,12 +19,13 @@ import { AuthGuard } from 'src/shared/guards/auth.guard';
 import { AccessGuard } from 'src/shared/guards/access.guard';
 import { AccessType } from 'src/types';
 import UserUpdateDto from './dtos/user-update.dto';
+import { HashUserData } from 'src/shared/pipe/hash-user-data.pipe';
 
 @Controller('users')
-@UseGuards(AuthGuard)
 @ApiBearerAuth()
 @UseInterceptors(PasswordInterceptor)
-@UseGuards(new AccessGuard([AccessType.ADMIN]))
+@UseGuards(AuthGuard, new AccessGuard([AccessType.ADMIN]))
+@UsePipes(HashUserData)
 export class UsersController {
  constructor(private readonly users: UsersService) {}
  @Get(':id')
@@ -35,7 +37,7 @@ export class UsersController {
   return this.users.get();
  }
  @Post()
- add(@Body(PasswordPipe) body: UserDtoAdd) {
+ add(@Body(PasswordPipe) body: AdminAddUser) {
   return this.users.add(body);
  }
  @Patch(':id')

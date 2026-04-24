@@ -4,6 +4,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
 import csrf from 'als-csrf';
+import { AuditLogs_Medical } from './entitys/auditLogs_Medical.entity';
 async function bootstrap() {
  const app = await NestFactory.create(AppModule);
  app.use(helmet());
@@ -22,7 +23,9 @@ async function bootstrap() {
   .setTitle('nest practice')
   .addBearerAuth()
   .build();
- const document = SwaggerModule.createDocument(app, config);
+ const document = SwaggerModule.createDocument(app, config, {
+  extraModels: [AuditLogs_Medical], // مدل‌های اضافی
+ });
  SwaggerModule.setup('/documentation', app, document, {
   swaggerOptions: {
    persistAuthorization: true,
