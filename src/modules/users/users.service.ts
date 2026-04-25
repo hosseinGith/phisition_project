@@ -124,7 +124,6 @@ export class UsersService {
 
    if (user?.access === AccessType.DOCTOR) {
     const id = (await this.doctors.findOneBy({ user: { id: user.id } }))?.id;
-    console.log(id);
     
     await queryRunner.manager.delete('doctor_hours', { doctor: { id } });
     await queryRunner.manager.delete('doctors', { id });

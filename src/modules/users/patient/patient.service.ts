@@ -129,9 +129,11 @@ export class PatientService {
   if (!token) throw new UnauthorizedException();
   const user = await this.users.findOne({
    where: { id: token.id },
-   select: ['doctor'],
+   relations: ['patient'],
   });
+
   if (!user) throw new NotFoundException();
   return user;
  }
 }
+

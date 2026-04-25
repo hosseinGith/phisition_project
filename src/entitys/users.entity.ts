@@ -26,7 +26,7 @@ export class Users {
  last_name: string;
  @Column({ length: 10, nullable: true, unique: true })
  national_id: string;
- @Column({ nullable: true })
+ @Column({ default: AccessType.PATIENT })
  @IsEnum(AccessType)
  access: AccessType;
  @Column({ default: false, type: 'boolean' })

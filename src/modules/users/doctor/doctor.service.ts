@@ -30,8 +30,9 @@ export class DoctorService {
   if (!token) throw new UnauthorizedException();
   const user = await this.users.findOne({
    where: { id: token.id },
-   select: ['doctor'],
+   relations: ['doctor'],
   });
+
   if (!user) throw new NotFoundException();
   return user;
  }

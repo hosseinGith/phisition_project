@@ -26,6 +26,12 @@ import type { Request } from 'express';
 @UseGuards(AuthGuard, new AccessGuard([]))
 export class DoctorController {
  constructor(private readonly service: DoctorService) {}
+
+ @UseGuards(new AccessGuard([AccessType.DOCTOR]))
+ @Get('/getUserData')
+ getUserData(@Req() request: Request) {
+  return this.service.getUserData(request);
+ }
  @Get()
  get() {
   return this.service.get();
@@ -33,11 +39,6 @@ export class DoctorController {
  @Get(':id')
  findOne(@Param('id') id: number) {
   return this.service.get(id);
- }
- @UseGuards(new AccessGuard([AccessType.DOCTOR]))
- @Get('getUserData')
- getUserData(@Req() request: Request) {
-  return this.service.getUserData(request);
  }
  @UseGuards(new AccessGuard([AccessType.DOCTOR]))
  @Patch(':id')
