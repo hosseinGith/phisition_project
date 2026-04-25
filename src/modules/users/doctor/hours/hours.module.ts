@@ -1,19 +1,18 @@
 import { Module } from '@nestjs/common';
-import { DoctorController } from './doctor.controller';
-import { DoctorService } from './doctor.service';
+import { HoursController } from './hours.controller';
+import { HoursService } from './hours.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Users } from 'src/entitys/users.entity';
 import { Doctors } from 'src/entitys/doctors.entity';
 import { DoctorHours } from 'src/entitys/doctorHours.entity';
-import { HoursService } from './hours/hours.service';
-import { HoursModule } from './hours/hours.module';
 
 @Module({
  imports: [
   TypeOrmModule.forFeature([Users, Doctors, DoctorHours]),
   HoursModule,
  ],
- controllers: [DoctorController],
- providers: [DoctorService, HoursService],
+
+ controllers: [HoursController],
+ providers: [HoursService],
 })
-export class DoctorModule {}
+export class HoursModule {}

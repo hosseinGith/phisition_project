@@ -6,22 +6,20 @@ import {
  Param,
  Patch,
  Post,
+ Req,
  UseGuards,
- UseInterceptors,
 } from '@nestjs/common';
 import { AppointmentsService } from './appointments.service';
-import { PasswordPipe } from 'src/shared/pipe/password.pipe';
-import { PasswordInterceptor } from 'src/shared/interceptors/password.interceptor';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from 'src/shared/guards/auth.guard';
 import { AccessGuard } from 'src/shared/guards/access.guard';
 import { AccessType } from 'src/types';
 import AppointmentsDtoAdd from './dtos/appointments-add.dto';
 import AppointmentsUpdateDto from './dtos/appointments-update.dto';
+import type { Request } from 'express';
 @Controller('appointments')
 @UseGuards(AuthGuard, new AccessGuard([AccessType.ADMIN]))
 @ApiBearerAuth()
-@UseInterceptors(PasswordInterceptor)
 export class AppointmentsController {
  constructor(private readonly appointments: AppointmentsService) {}
 
@@ -34,14 +32,11 @@ export class AppointmentsController {
   return this.appointments.get();
  }
  @Post()
- add(@Body(PasswordPipe) body: AppointmentsDtoAdd) {
-  return this.appointments.add(body);
+ add(@Body() body: AppointmentsDtoAdd, @Req() request: Request) {
+  return this.appointments.add(body, request);
  }
  @Patch(':id')
- update(
-  @Param('id') id: number,
-  @Body(PasswordPipe) body: AppointmentsUpdateDto,
- ) {
+ update(@Param('id') id: number, @Body() body: AppointmentsUpdateDto) {
   return this.appointments.update(id, body);
  }
  @Delete(':id')

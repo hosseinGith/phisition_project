@@ -5,6 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
 import csrf from 'als-csrf';
 import { AuditLogs_Medical } from './entitys/auditLogs_Medical.entity';
+import { ConvertNumberPersionToNumberLatinPipe } from './shared/pipes/convert-number-persion-to-number-latin.pipe';
 async function bootstrap() {
  const app = await NestFactory.create(AppModule);
  app.use(helmet());
@@ -12,6 +13,7 @@ async function bootstrap() {
  app.use(csrf());
  app.enableCors();
  app.useGlobalPipes(
+  new ConvertNumberPersionToNumberLatinPipe(),
   new ValidationPipe({
    transform: true,
    whitelist: true,
@@ -21,6 +23,8 @@ async function bootstrap() {
  );
  const config = new DocumentBuilder()
   .setTitle('nest practice')
+  .setDescription('API description')
+  .setVersion('1.0')
   .addBearerAuth()
   .build();
  const document = SwaggerModule.createDocument(app, config, {

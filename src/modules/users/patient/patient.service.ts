@@ -2,38 +2,45 @@ import {
  BadRequestException,
  Injectable,
  NotFoundException,
+ UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from 'src/entitys/users.entity';
-import { AccessType } from 'src/types';
+import { AccessType, TokenType } from 'src/types';
 import { Repository } from 'typeorm';
 import ActiveTurn from './dtos/turn.dto';
 import { Doctors } from 'src/entitys/doctors.entity';
 import { DoctorHours } from 'src/entitys/doctorHours.entity';
 import { Appointments } from 'src/entitys/appointments.entity';
+import { Request } from 'express';
+import { JwtService } from '@nestjs/jwt';
+import { Patients } from 'src/entitys/patients.entity';
 
 @Injectable()
 export class PatientService {
  constructor(
   @InjectRepository(Users)
-  private usersRepository: Repository<Users>,
+  private users: Repository<Users>,
   @InjectRepository(Doctors)
   private doctors: Repository<Doctors>,
+  @InjectRepository(Patients)
+  private patients: Repository<Patients>,
   @InjectRepository(DoctorHours)
   private doctorHours: Repository<DoctorHours>,
   @InjectRepository(Appointments)
   private appointments: Repository<Appointments>,
+  private jwt: JwtService,
  ) {}
 
  async findActiveDoctors() {
-  return await this.usersRepository.findOneBy({
+  return await this.users.findOneBy({
    access: AccessType.DOCTOR,
    is_active: true,
   });
  }
  // public.service.ts
  async search(q: string, specialty?: string) {
-  const queryBuilder = this.usersRepository
+  const queryBuilder = this.users
    .createQueryBuilder('users')
    .leftJoinAndSelect('users.doctor', 'doctor');
 
@@ -55,36 +62,62 @@ export class PatientService {
  }
 
  // taking turns
- async activeTurn(body: ActiveTurn) {
+ async activeTurn(body: ActiveTurn, request: Request) {
   const doctor = await this.doctors.findOneBy({ id: body.doctorId });
   if (!doctor)
    return new NotFoundException('دکتر مورد نظر پیدا نشد.', 'Doctor not found');
+  const token = request.headers.authorization?.split(' ')[1];
+  if (!token) throw new UnauthorizedException();
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const de_patient = this.jwt.decode(String(token));
+
+  if (!de_patient) throw new UnauthorizedException();
+  const userId = (de_patient as TokenType).id;
+  const user = await this.users.findOne({
+   where: { id: userId },
+   relations: ['patient'],
+  });
+
+  if (!user) throw new NotFoundException('کاربر پیدا نشد.', 'User not found');
+  if (user.access !== AccessType.PATIENT)
+   throw new NotFoundException('شما بیمار نیستید.', 'User not found');
+
+  const patient = await this.patients.findOneBy({ id: user?.patient.id });
+  if (!patient)
+   throw new NotFoundException('کاربر پیدا نشد.', 'User not found');
+
   const doctorHour = await this.doctorHours.findOneBy({
    id: body.hourId,
-   doctor,
+   doctor: { id: doctor.id },
   });
   if (!doctorHour)
    return new NotFoundException(
     'ساعت مورد نظر پیدا نشد.',
     'Doctor hour not found',
    );
+
+  const dateOnly = new Date(body.date).toISOString().split('T')[0];
+
   const appointment = await this.appointments.findOneBy({
-   id: body.hourId,
-   doctor,
-   appointment_date: body.date,
+   doctor: { id: doctor.id },
+   appointment_date: new Date(dateOnly),
+   hour: { id: doctorHour.id },
   });
+
   if (appointment)
    return new BadRequestException(
     'در ساعت انتخاب شده دکتر وقت آزاد ندارد.لطفا ساعت دیگری انتخاب کنید.',
-    'appointment not found',
+    'Hour problem',
    );
 
-  const new_appointment = this.appointments.create({
-   appointment_date: body.date,
-   doctor,
+  const new_appointment = await this.appointments.insert({
+   appointment_date: new Date(dateOnly),
+   doctor: { id: doctor.id },
    hour: doctorHour,
+   patient: { id: patient.id },
   });
-  return await this.appointments.save(new_appointment);
+
+  return new_appointment;
  }
 }
-

@@ -1,6 +1,7 @@
 import {
  CanActivate,
  ExecutionContext,
+ ForbiddenException,
  Injectable,
  NotFoundException,
  UnauthorizedException,
@@ -21,9 +22,11 @@ export class AuthGuard implements CanActivate {
  ) {}
 
  async canActivate(context: ExecutionContext): Promise<boolean> {
-  return true;
   const request = context.switchToHttp().getRequest<Request>();
+  return true;
+  if (request.url.split('/')[1] === 'auth') return true;
   const token = String(request.headers?.authorization).split(' ')[1];
+
   try {
    if (!token) throw new Error();
    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
@@ -31,7 +34,10 @@ export class AuthGuard implements CanActivate {
    if (res?.number) {
     const user = await this.usersRep.findOneBy({ number: res.number });
     if (!user) throw new NotFoundException();
-
+    if (!user?.is_active)
+     throw new ForbiddenException(
+      'اکانت شما فعال نشده است. تا فعال شدن آن منتظر بمونید.',
+     );
     request['userAccess'] = user?.access || '';
 
     return true;

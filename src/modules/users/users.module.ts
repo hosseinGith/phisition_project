@@ -11,6 +11,8 @@ import { Patients } from 'src/entitys/patients.entity';
 import { DoctorHours } from 'src/entitys/doctorHours.entity';
 import { Appointments } from 'src/entitys/appointments.entity';
 import { DoctorModule } from './doctor/doctor.module';
+import { DoctorService } from './doctor/doctor.service';
+import { DoctorController } from './doctor/doctor.controller';
 
 @Module({
  imports: [
@@ -24,7 +26,7 @@ import { DoctorModule } from './doctor/doctor.module';
   PatientModule,
   DoctorModule,
  ],
- controllers: [UsersController, PatientController],
- providers: [UsersService, PatientService],
+ controllers: [UsersController, PatientController, DoctorController],
+ providers: [UsersService, PatientService, DoctorService],
 })
 export class UsersModule {}

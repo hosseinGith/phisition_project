@@ -6,6 +6,7 @@ import {
  ManyToOne,
  OneToMany,
  OneToOne,
+ JoinColumn,
 } from 'typeorm';
 import { Patients } from './patients.entity';
 import { Doctors } from './doctors.entity';
@@ -43,6 +44,7 @@ export class Appointments {
  appointment_date: Date;
  // ساعت نوبت
  @OneToOne(() => DoctorHours)
+ @JoinColumn()
  hour: DoctorHours;
  @Column({
   type: 'enum',
@@ -63,6 +65,6 @@ export class Appointments {
  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
  created_at: Date;
  // یادآوری ارسال شده؟
- @Column({ type: 'bit' })
- reminder_sent: number;
+ @Column({ type: 'boolean', default: false })
+ reminder_sent: boolean;
 }

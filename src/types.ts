@@ -3,7 +3,8 @@ export enum AccessType {
  DOCTOR = 'doctor',
  ACCEPTANCE = 'acceptance',
  ADMIN = 'admin',
- FINANCIAL_MANAGER="financialManager"
+ FINANCIAL_MANAGER = 'financialManager',
+ SYSTEM_ADMIN = 'system_admin',
 }
 export interface TokenType {
  number: string;

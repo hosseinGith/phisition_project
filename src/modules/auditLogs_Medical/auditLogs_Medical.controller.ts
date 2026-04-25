@@ -8,8 +8,6 @@ import {
  UseInterceptors,
 } from '@nestjs/common';
 import { AuditLogs_MedicalService } from './auditLogs_Medical.service';
-import { PasswordPipe } from 'src/shared/pipe/password.pipe';
-import { PasswordInterceptor } from 'src/shared/interceptors/password.interceptor';
 import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import { AuthGuard } from 'src/shared/guards/auth.guard';
 import { AccessGuard } from 'src/shared/guards/access.guard';
@@ -19,7 +17,6 @@ import { AuditLogs_Medical } from 'src/entitys/auditLogs_Medical.entity';
 @Controller('auditLogs_Medical')
 @UseGuards(AuthGuard, new AccessGuard([AccessType.ADMIN]))
 @ApiBearerAuth()
-@UseInterceptors(PasswordInterceptor)
 export class AuditLogs_MedicalController {
  constructor(private readonly auditLogs_Medical: AuditLogs_MedicalService) {}
  @ApiResponse({
@@ -38,7 +35,7 @@ export class AuditLogs_MedicalController {
  }
 
  @Post()
- add(@Body(PasswordPipe) body: AuditLogs_MedicalDtoAdd) {
+ add(@Body() body: AuditLogs_MedicalDtoAdd) {
   return this.auditLogs_Medical.add(body);
  }
 }

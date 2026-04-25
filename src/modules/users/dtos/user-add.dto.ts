@@ -23,9 +23,7 @@ export class UserDtoAdd {
  @IsString()
  @Matches(numberRegx, { message: 'فرمت شماره موبایل اشتباه است' })
  number: string;
- @IsString()
- @IsNotEmpty()
- password: string;
+
  @IsNotEmpty()
  @IsEnum(AccessType)
  access: AccessType;

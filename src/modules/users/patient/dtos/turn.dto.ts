@@ -1,4 +1,5 @@
-import { IsDate, IsNumber } from 'class-validator';
+import { IsDate, IsEnum, IsNumber } from 'class-validator';
+import { VisitTypeAppointmentsEnum } from 'src/entitys/appointments.entity';
 
 export default class ActiveTurn {
  @IsNumber()
@@ -7,4 +8,6 @@ export default class ActiveTurn {
  doctorId: number;
  @IsDate()
  date: Date;
+ @IsEnum(VisitTypeAppointmentsEnum)
+ visit_type: VisitTypeAppointmentsEnum;
 }

@@ -21,7 +21,7 @@ import { baseTimeOtpExpire } from 'src/shared/settings';
 export class AuthService {
  constructor(
   @InjectRepository(Users)
-  private readonly usersRepository: Repository<Users>,
+  private readonly users: Repository<Users>,
   @InjectRepository(Patients)
   private readonly patients: Repository<Patients>,
   @InjectRepository(Doctors)
@@ -73,8 +73,8 @@ export class AuthService {
 
  async verify_otp_code(body: LoginDto) {
   const otp = await this.otpCodes.findOneBy({ number: body.number });
-
-  if (otp?.code !== this.cryptoHash.encrypt(body.code)) {
+  if (!otp?.code) throw new NotFoundException();
+  if (this.cryptoHash.decrypt(otp.code) !== body.code) {
    if (otp) {
     await this.otpCodes.delete({ number: body.number });
     throw new BadRequestException(
@@ -97,18 +97,18 @@ export class AuthService {
    );
   }
   try {
-   const existingNumber = await this.usersRepository.findOne({
+   const existingNumber = await this.users.findOne({
     where: { number: body.number },
    });
 
    if (!existingNumber) {
-    const user = this.usersRepository.create({
+    const user = this.users.create({
      number: body.number,
     });
-    const savedUser = await this.usersRepository.save(user);
+    const savedUser = await this.users.save(user);
     const token = this.jwtService.sign({
      id: savedUser.id,
-     number: savedUser.number,
+     number: body.number,
     });
     await this.otpCodes.delete({ number: body.number });
 
@@ -116,7 +116,7 @@ export class AuthService {
      token,
      user: {
       id: savedUser.id,
-      number: savedUser.number,
+      number: body.number,
      },
     };
    } else {

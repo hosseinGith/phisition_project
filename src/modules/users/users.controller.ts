@@ -12,20 +12,19 @@ import {
 } from '@nestjs/common';
 import { AdminAddUser } from './dtos/user-add.dto';
 import { UsersService } from './users.service';
-import { PasswordPipe } from 'src/shared/pipe/password.pipe';
-import { PasswordInterceptor } from 'src/shared/interceptors/password.interceptor';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from 'src/shared/guards/auth.guard';
 import { AccessGuard } from 'src/shared/guards/access.guard';
 import { AccessType } from 'src/types';
 import UserUpdateDto from './dtos/user-update.dto';
-import { HashUserData } from 'src/shared/pipe/hash-user-data.pipe';
+import { HashUserData } from 'src/shared/pipes/hash-user-data.pipe';
+import { DecryptUserData } from 'src/shared/interceptors/decrypt-user-data.interceptor';
 
 @Controller('users')
 @ApiBearerAuth()
-@UseInterceptors(PasswordInterceptor)
 @UseGuards(AuthGuard, new AccessGuard([AccessType.ADMIN]))
 @UsePipes(HashUserData)
+@UseInterceptors(DecryptUserData)
 export class UsersController {
  constructor(private readonly users: UsersService) {}
  @Get(':id')
@@ -37,11 +36,11 @@ export class UsersController {
   return this.users.get();
  }
  @Post()
- add(@Body(PasswordPipe) body: AdminAddUser) {
+ add(@Body() body: AdminAddUser) {
   return this.users.add(body);
  }
  @Patch(':id')
- update(@Param('id') id: number, @Body(PasswordPipe) body: UserUpdateDto) {
+ update(@Param('id') id: number, @Body() body: UserUpdateDto) {
   return this.users.update(id, body);
  }
  @Delete(':id')

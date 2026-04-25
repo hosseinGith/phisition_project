@@ -9,8 +9,6 @@ import {
  UseGuards,
  UseInterceptors,
 } from '@nestjs/common';
-import { PasswordPipe } from 'src/shared/pipe/password.pipe';
-import { PasswordInterceptor } from 'src/shared/interceptors/password.interceptor';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from 'src/shared/guards/auth.guard';
 import { AccessGuard } from 'src/shared/guards/access.guard';
@@ -22,7 +20,6 @@ import PrescriptionsUpdateDto from './dtos/prescriptions-update.dto';
 @Controller('prescriptions')
 @UseGuards(AuthGuard, new AccessGuard([AccessType.ADMIN]))
 @ApiBearerAuth()
-@UseInterceptors(PasswordInterceptor)
 export class PrescriptionsController {
  constructor(private readonly prescriptions: PrescriptionsService) {}
 
@@ -35,14 +32,11 @@ export class PrescriptionsController {
   return this.prescriptions.get();
  }
  @Post()
- add(@Body(PasswordPipe) body: PrescriptionsDtoAdd) {
+ add(@Body() body: PrescriptionsDtoAdd) {
   return this.prescriptions.add(body);
  }
  @Patch(':id')
- update(
-  @Param('id') id: number,
-  @Body(PasswordPipe) body: PrescriptionsUpdateDto,
- ) {
+ update(@Param('id') id: number, @Body() body: PrescriptionsUpdateDto) {
   return this.prescriptions.update(id, body);
  }
  @Delete(':id')

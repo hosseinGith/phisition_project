@@ -16,9 +16,12 @@ export class AccessGuard implements CanActivate {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
   const userAccess = request['userAccess'];
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-  if (this.access.includes(userAccess)) return true;
+  if (
+   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+   this.access.includes(userAccess) ||
+   userAccess === AccessType.SYSTEM_ADMIN
+  )
+   return true;
   throw new ForbiddenException();
  }
 }
-

@@ -8,16 +8,16 @@ import { Users } from 'src/entitys/users.entity';
 import { Repository } from 'typeorm';
 import { AdminAddUser } from './dtos/user-add.dto';
 import UserUpdateDto from './dtos/user-update.dto';
-import bcrypt from 'bcrypt';
 import { AccessType } from 'src/types';
 import { Patients } from 'src/entitys/patients.entity';
 import { Doctors } from 'src/entitys/doctors.entity';
 import { JwtService } from '@nestjs/jwt';
+import find from 'src/shared/utils/find';
 @Injectable()
 export class UsersService {
  constructor(
   @InjectRepository(Users)
-  private usersRepository: Repository<Users>,
+  private users: Repository<Users>,
   @InjectRepository(Patients)
   private patients: Repository<Patients>,
   @InjectRepository(Doctors)
@@ -26,19 +26,16 @@ export class UsersService {
  ) {}
 
  async findActiveDoctors() {
-  return await this.usersRepository.findOneBy({
+  return await this.users.findOneBy({
    access: AccessType.DOCTOR,
    is_active: true,
   });
  }
  async get(id?: number) {
-  if (!Number.isNaN(id) && id) {
-   return await this.usersRepository.findOneBy({ id });
-  }
-  return await this.usersRepository.find();
+  return await find<Users>(this.users, id);
  }
  async add(body: AdminAddUser) {
-  const existingUser = await this.usersRepository.findOne({
+  const existingUser = await this.users.findOne({
    where: { number: body.user.number },
   });
 
@@ -50,13 +47,12 @@ export class UsersService {
 
   const is_active = body.user.access === AccessType.PATIENT;
 
-  const queryRunner =
-   this.usersRepository.manager.connection.createQueryRunner();
+  const queryRunner = this.users.manager.connection.createQueryRunner();
   await queryRunner.connect();
   await queryRunner.startTransaction();
 
   try {
-   const user = this.usersRepository.create({
+   const user = this.users.create({
     number: body.user.number,
     is_active,
     access: body.user.access,
@@ -76,15 +72,17 @@ export class UsersService {
 
    const token = this.jwtService.sign({
     id: savedUser.id,
-    number: savedUser.number,
+    number: body.user.number,
     role: body.user.access,
    });
 
    return {
     token,
-    user: savedUser,
+    user: { ...savedUser, number: body.user.number },
    };
-  } catch {
+  } catch (err) {
+   console.error(err);
+
    await queryRunner.rollbackTransaction();
    throw new BadRequestException('خطا در ثبت‌نام. لطفاً دوباره تلاش کنید.');
   } finally {
@@ -94,16 +92,16 @@ export class UsersService {
  async update(id: number, body: UserUpdateDto) {
   if (!id) throw new BadRequestException('', 'id');
   if (body?.number)
-   if (await this.usersRepository.findOneBy({ number: body?.number }))
+   if (await this.users.findOneBy({ number: body?.number }))
     throw new BadRequestException(
      'این نام کاربری استفاده شده است. لطفاً نام کاربری دیگری انتخاب کنید.',
      'number',
     );
   if (body?.national_id)
-   if (await this.usersRepository.findOneBy({ national_id: body.national_id }))
+   if (await this.users.findOneBy({ national_id: body.national_id }))
     throw new BadRequestException('این کد ملی استفاده شده است.', 'national_id');
 
-  const user = await this.usersRepository.findOneBy({ id });
+  const user = await this.users.findOneBy({ id });
   const fieldsToUpdate = Object.keys(body).length;
 
   if (fieldsToUpdate === 0) {
@@ -111,27 +109,27 @@ export class UsersService {
   }
 
   if (user)
-   return (
-    (await this.usersRepository.update({ id: user.id }, body)).affected === 1
-   );
+   return (await this.users.update({ id: user.id }, body)).affected === 1;
   throw new NotFoundException();
  }
  async delete(id: number) {
   if (!id) throw new BadRequestException('id not found', 'id');
 
-  const queryRunner =
-   this.usersRepository.manager.connection.createQueryRunner();
-  const user = await this.usersRepository.findOneBy({ id });
+  const queryRunner = this.users.manager.connection.createQueryRunner();
+  const user = await this.users.findOneBy({ id });
   if (!user) throw new NotFoundException();
   try {
    await queryRunner.connect();
    await queryRunner.startTransaction();
 
    if (user?.access === AccessType.DOCTOR) {
-    const id = (await this.doctors.findOneBy({ user }))?.id;
+    const id = (await this.doctors.findOneBy({ user: { id: user.id } }))?.id;
+    console.log(id);
+    
+    await queryRunner.manager.delete('doctor_hours', { doctor: { id } });
     await queryRunner.manager.delete('doctors', { id });
    } else if (user?.access === AccessType.PATIENT) {
-    const id = (await this.patients.findOneBy({ user }))?.id;
+    const id = (await this.patients.findOneBy({ user: { id: user.id } }))?.id;
     await queryRunner.manager.delete('patients', { id });
    }
    await queryRunner.manager.delete('users', { id });

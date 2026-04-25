@@ -17,7 +17,7 @@ export class Patients {
  @JoinColumn()
  user: Users;
  // شماره پرونده (یکتا، مثل MR-۱۴۰۴-۱۲۳۴)
- @Column({ unique: true, default: () => 'UUID()' })
+ @Column({ unique: true })
  medical_record_number: string;
  // گروه خونی
  @Column()

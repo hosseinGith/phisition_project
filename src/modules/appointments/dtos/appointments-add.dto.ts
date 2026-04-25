@@ -1,4 +1,4 @@
-import { IsEnum, IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsDate, IsEnum, IsNumber, IsString } from 'class-validator';
 import {
  StatusAppointmentsEnum,
  VisitTypeAppointmentsEnum,
@@ -6,23 +6,19 @@ import {
 
 export default class AppointmentsDtoAdd {
  @IsNumber()
- patientId?: number;
+ patientId: number;
  @IsNumber()
- doctorId?: number;
- @IsString()
- appointmentDate?: string;
- @IsString()
- appointmentTime?: string;
- @IsString()
+ doctorId: number;
+ @IsDate()
+ date: Date;
  @IsEnum(StatusAppointmentsEnum)
- status?: string;
- @IsString()
+ status: StatusAppointmentsEnum;
  @IsEnum(VisitTypeAppointmentsEnum)
- visit_type?: string;
+ visit_type: VisitTypeAppointmentsEnum;
  @IsString()
- symptoms?: string;
- @IsString()
- created_at?: string;
+ symptoms: string;
+ @IsBoolean()
+ reminderSent: boolean;
  @IsNumber()
- reminderSent?: number;
+ hourId: number;
 }
