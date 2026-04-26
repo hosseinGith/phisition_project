@@ -10,7 +10,7 @@ import { hashedUserCol } from '../settings';
 @Injectable()
 export class HashUserData implements PipeTransform {
  transform(value: any) {
-  if (!value) return value;
+  if (!value || typeof value !== 'object') return value;
   return this.deepSearchAndEncrypt(value);
  }
 
@@ -18,15 +18,20 @@ export class HashUserData implements PipeTransform {
   if (Array.isArray(data)) {
    return data.map((item) => this.deepSearchAndEncrypt(item));
   }
-
-  if (typeof data === 'object' && data !== null) {
+  if (data) {
    const result = { ...data };
 
    for (const [key, value] of Object.entries(result)) {
-    if (typeof value === 'string' && hashedUserCol.includes(key)) {
-     result[key] = new CryptoHash().encrypt(value);
-    } else if (typeof value === 'object' && value !== null) {
-     result[key] = this.deepSearchAndEncrypt(value);
+    try {
+     if (key !== 'date')
+      if (typeof value === 'string' && hashedUserCol.includes(key)) {
+       result[key] = new CryptoHash().encrypt(value);
+      } else if (typeof value === 'object' && value !== null) {
+       result[key] = this.deepSearchAndEncrypt(value);
+      }
+    } catch {
+     /* empty */
+     result[key] = value;
     }
    }
 
