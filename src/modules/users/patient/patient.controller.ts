@@ -39,14 +39,15 @@ export class PatientController {
  profile(@Req() request: Request) {
   return this.service.profile(request);
  }
+
+ @UseGuards(new AccessGuard([AccessType.PATIENT]))
+ @Get('/appointments')
+ get_appointments(@Req() request: Request) {
+  return this.service.get_appointments(request);
+ }
  @UseGuards(new AccessGuard([AccessType.PATIENT]))
  @Post('/appointment/active')
  appointment(@Body() body: ActiveTurn, @Req() request: Request) {
   return this.service.appointment(body, request);
- }
- @UseGuards(new AccessGuard([AccessType.PATIENT]))
- @Post('/appointments')
- get_appointments(@Req() request: Request) {
-  return this.service.get_appointments(request);
  }
 }
