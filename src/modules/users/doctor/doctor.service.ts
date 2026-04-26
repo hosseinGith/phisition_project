@@ -12,6 +12,8 @@ import find from 'src/shared/utils/find';
 import type { Request } from 'express';
 import getDataFromUserToken from 'src/shared/utils/getDataFromUserToken';
 import { Users } from 'src/entitys/users.entity';
+import { Patients } from 'src/entitys/patients.entity';
+import { Appointments } from 'src/entitys/appointments.entity';
 
 @Injectable()
 export class DoctorService {
@@ -20,6 +22,10 @@ export class DoctorService {
   private readonly doctors: Repository<Doctors>,
   @InjectRepository(Users)
   private readonly users: Repository<Users>,
+  @InjectRepository(Patients)
+  private readonly patients: Repository<Patients>,
+  @InjectRepository(Appointments)
+  private readonly appointments: Repository<Appointments>,
  ) {}
 
  async get(id?: string) {
@@ -35,6 +41,39 @@ export class DoctorService {
 
   if (!user) throw new NotFoundException();
   return user;
+ }
+ async my_appointments(request: Request) {
+  const token = getDataFromUserToken(request);
+  if (!token) throw new UnauthorizedException();
+  const user = await this.users.findOne({
+   where: { id: token.id },
+   relations: ['doctor'],
+  });
+  if (!user) throw new UnauthorizedException();
+  const patients = await this.appointments.findOne({
+   where: { doctor: { id: user.doctor.id } },
+   relations: ['patients', 'prescriptions'],
+   select: {
+    appointment_date: true,
+    created_at: true,
+    hour: true,
+    id: true,
+    patient: {
+     allergies: true,
+     blood_type: true,
+     chronic_diseases: true,
+     emergency_contact_name: true,
+     emergency_contact_phone: true,
+     id: true,
+     medical_record_number: true,
+     user: {
+      first_name: true,
+      last_name: true,
+     },
+    },
+   },
+  });
+  return patients;
  }
 
  async update(id: string, body: AddDoctorDto) {

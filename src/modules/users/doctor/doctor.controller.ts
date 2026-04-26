@@ -28,9 +28,14 @@ export class DoctorController {
  constructor(private readonly service: DoctorService) {}
 
  @UseGuards(new AccessGuard([AccessType.DOCTOR]))
- @Get('/getUserData')
+ @Get('/profile')
  getUserData(@Req() request: Request) {
   return this.service.getUserData(request);
+ }
+ @UseGuards(new AccessGuard([AccessType.DOCTOR]))
+ @Get('/my_patients')
+ my_appointments(@Req() request: Request) {
+  return this.service.my_appointments(request);
  }
  @Get()
  get() {

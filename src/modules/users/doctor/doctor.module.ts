@@ -7,10 +7,18 @@ import { Doctors } from 'src/entitys/doctors.entity';
 import { DoctorHours } from 'src/entitys/doctorHours.entity';
 import { HoursService } from './hours/hours.service';
 import { HoursModule } from './hours/hours.module';
+import { Patients } from 'src/entitys/patients.entity';
+import { Appointments } from 'src/entitys/appointments.entity';
 
 @Module({
  imports: [
-  TypeOrmModule.forFeature([Users, Doctors, DoctorHours]),
+  TypeOrmModule.forFeature([
+   Users,
+   Doctors,
+   DoctorHours,
+   Patients,
+   Appointments,
+  ]),
   HoursModule,
  ],
  controllers: [DoctorController],
