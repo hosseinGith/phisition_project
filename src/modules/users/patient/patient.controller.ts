@@ -2,6 +2,7 @@ import {
  Body,
  Controller,
  Get,
+ Patch,
  Post,
  Query,
  Req,
@@ -17,6 +18,7 @@ import { AccessType } from 'src/types';
 import type { Request } from 'express';
 import { HashUserData } from 'src/shared/pipes/hash-user-data.pipe';
 import { DecryptUserData } from 'src/shared/interceptors/decrypt-user-data.interceptor';
+import PatientUpdateDto from './dtos/update.dto';
 
 @Controller('patient')
 @ApiBearerAuth()
@@ -49,5 +51,10 @@ export class PatientController {
  @Post('/appointment/active')
  appointment(@Body() body: ActiveTurn, @Req() request: Request) {
   return this.service.appointment(body, request);
+ }
+ @UseGuards(new AccessGuard([AccessType.PATIENT]))
+ @Patch('/patientUpdate')
+ patientUpdate(@Body() body: PatientUpdateDto, @Req() request: Request) {
+  return this.service.update(body, request);
  }
 }

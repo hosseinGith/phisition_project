@@ -16,6 +16,7 @@ import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { Patients } from 'src/entitys/patients.entity';
 import getDataFromUserToken from 'src/shared/utils/getDataFromUserToken';
+import PatientUpdateDto from './dtos/update.dto';
 
 @Injectable()
 export class PatientService {
@@ -182,5 +183,32 @@ export class PatientService {
 
   if (!user) throw new NotFoundException();
   return user;
+ }
+ async update(body: PatientUpdateDto, request: Request) {
+  const token = getDataFromUserToken(request);
+  if (!token) throw new UnauthorizedException();
+  const user = await this.users.findOne({
+   where: { id: token.id },
+   relations: ['patient'],
+   select: { patient: true },
+  });
+
+  if (!user) throw new NotFoundException();
+  for (const key in user.patient) {
+   try {
+    if (key in body && user.patient[key] === body[key]) delete body[key];
+   } catch {
+    /* empty */
+   }
+  }
+  if(Object.keys(body).length===0)throw new BadRequestException('فیلدی ارسال نشده است. یا مقدار آن تکراری است.')
+
+  const result = await this.patients.update(
+   {
+    id: user.patient.id,
+   },
+   body,
+  );
+  return Boolean(result.affected);
  }
 }
