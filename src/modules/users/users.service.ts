@@ -53,10 +53,8 @@ export class UsersService {
 
   try {
    const user = this.users.create({
-    number: body.user.number,
+    ...body.user,
     is_active,
-    access: body.user.access,
-    national_id: body.user.national_id,
    });
 
    const savedUser = await queryRunner.manager.save(user);
