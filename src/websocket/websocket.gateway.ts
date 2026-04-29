@@ -1,4 +1,3 @@
-// resources.gateway.ts
 import {
  WebSocketGateway,
  WebSocketServer,
@@ -26,7 +25,7 @@ export class WebsocketGateway
 
  @UseGuards(WsAuthGuard)
  handleConnection(client: Socket) {
-  this.websocketService.addClient(client);
+  void this.websocketService.addClient(client);
  }
 
  handleDisconnect(client: Socket) {
