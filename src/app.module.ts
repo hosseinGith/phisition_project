@@ -4,7 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './modules/users/users.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
+import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './modules/auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -26,6 +26,8 @@ import { Conversitions } from './entitys/conversitions.entity';
 import { OtpCodes } from './entitys/otpCodes.entity';
 import { DoctorHours } from './entitys/doctorHours.entity';
 import { AuthGuard } from './shared/guards/auth.guard';
+import { WebsocketGateway } from './websocket/websocket.gateway';
+import { WebsocketService } from './websocket/websocket.service';
 dotenv.config();
 
 @Module({
@@ -95,6 +97,8 @@ dotenv.config();
    provide: APP_GUARD,
    useClass: AuthGuard,
   },
+  WebsocketGateway,
+  WebsocketService,
  ],
 })
 export class AppModule {}
