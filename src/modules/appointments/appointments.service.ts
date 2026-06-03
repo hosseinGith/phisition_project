@@ -2,63 +2,44 @@ import {
  BadRequestException,
  Injectable,
  NotFoundException,
- UnauthorizedException,
 } from '@nestjs/common';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { FindOptionsSelect, Repository } from 'typeorm';
 import { Appointments } from 'src/entitys/appointments.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import AppointmentsDtoAdd from './dtos/appointments-add.dto';
 import AppointmentsUpdateDto from './dtos/appointments-update.dto';
-import { Request } from 'express';
-import { JwtService } from '@nestjs/jwt';
-import { Doctors } from 'src/entitys/doctors.entity';
-import { Patients } from 'src/entitys/patients.entity';
-import { Users } from 'src/entitys/users.entity';
-import { DoctorHours } from 'src/entitys/doctorHours.entity';
+
+import { DoctorService } from '../users/doctor/doctor.service';
+import { PatientService } from '../users/patient/patient.service';
+import { HoursService } from '../users/doctor/hours/hours.service';
 
 @Injectable()
 export class AppointmentsService {
  constructor(
   @InjectRepository(Appointments)
   private appointments: Repository<Appointments>,
-  @InjectRepository(Doctors)
-  private doctors: Repository<Doctors>,
-  @InjectRepository(Patients)
-  private patients: Repository<Patients>,
-  @InjectRepository(DoctorHours)
-  private doctorHours: Repository<DoctorHours>,
-  @InjectRepository(Users)
-  private users: Repository<Users>,
-  private readonly jwt: JwtService,
+  private readonly doctorsService: DoctorService,
+  private readonly patientsService: PatientService,
+  private readonly doctorHoursService: HoursService,
  ) {}
- async get(id?: string) {
-  let res:
-   | FindOptionsWhere<Appointments>
-   | FindOptionsWhere<Appointments>[]
-   | null;
-  if (!Number.isNaN(id)) {
-   res = await this.appointments.findOneBy({ id });
-  } else res = await this.appointments.find();
+ async findOne(id?: string) {
+  const res = await this.appointments.findOneBy({ id });
   if (res) return res;
   throw new NotFoundException();
  }
- async add(body: AppointmentsDtoAdd, request: Request) {
-  const token = String(request.headers?.authorization).split(' ')[1];
-
-  if (!token) throw new UnauthorizedException();
-  const patient = await this.patients.findOneBy({ id: body.patientId });
-  if (!patient) throw new NotFoundException('', 'Patient');
-  const doctor = await this.doctors.findOneBy({ id: body.doctorId });
-  if (!doctor) throw new NotFoundException('', 'Doctor');
-  const doctorHour = await this.doctorHours.findOneBy({
-   id: body.hourId,
+ async findAll(select?: FindOptionsSelect<Appointments>) {
+  const res = await this.appointments.find({ select: select });
+  return res;
+ }
+ async create(body: AppointmentsDtoAdd) {
+  const [patient, doctor] = await Promise.all([
+   this.patientsService.findOne(body.patientId),
+   this.doctorsService.findOne(body.doctorId),
+  ]);
+  const doctorHour = await this.doctorHoursService.findOne(body.hourId, {
    doctor: { id: doctor.id },
   });
-  if (!doctorHour)
-   throw new NotFoundException(
-    'ساعت مورد نظر پیدا نشد.',
-    'Doctor hour not found',
-   );
+
   const dateOnly = new Date(body.date).toISOString().split('T')[0];
 
   const appointment = await this.appointments.findOneBy({
@@ -73,7 +54,7 @@ export class AppointmentsService {
     'Hour problem',
    );
 
-  const create_status = this.appointments.create({
+  const newAppointment = this.appointments.create({
    ...body,
    appointment_date: dateOnly,
    doctor: { id: doctor.id },
@@ -84,12 +65,9 @@ export class AppointmentsService {
    symptoms: body.symptoms,
    reminder_sent: Boolean(body.reminderSent),
   });
-  const appointments = await this.appointments.save(create_status);
-  return appointments;
+  return await this.appointments.save(newAppointment);
  }
  async update(id: string, body: AppointmentsUpdateDto) {
-  if (!id) throw new BadRequestException('', 'id');
-
   const user = await this.appointments.findOneBy({ id });
   const fieldsToUpdate = Object.keys(body).length;
 
@@ -103,10 +81,9 @@ export class AppointmentsService {
    );
   throw new NotFoundException();
  }
- async delete(id: string) {
-  if (!id) throw new BadRequestException('id not found', 'id');
+ async remove(id: string) {
   const res = await this.appointments.delete({ id });
   if (!res.affected) throw new NotFoundException();
-  return true;
+  return { message: 'نوبت با موفقیت حذف شد.' };
  }
 }
