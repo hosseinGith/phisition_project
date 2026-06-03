@@ -328,13 +328,15 @@ export class PatientService {
   });
 
   if (!user) throw new NotFoundException();
-  for (const key in user.patient) {
-   try {
-    if (key in body && user.patient[key] === body[key]) delete body[key];
-   } catch {
-    /* empty */
+  (Object.keys(body) as (keyof PatientUpdateDto)[]).forEach((key) => {
+   if (
+    key in user.patient &&
+    (user.patient as unknown as Record<string, unknown>)[key] ===
+     (body as Record<string, unknown>)[key]
+   ) {
+    delete body[key];
    }
-  }
+  });
   if (Object.keys(body).length === 0)
    throw new BadRequestException(
     'فیلدی ارسال نشده است. یا مقدار آن تکراری است.',
