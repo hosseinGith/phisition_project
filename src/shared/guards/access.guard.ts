@@ -5,27 +5,30 @@ import {
  Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { Request } from 'express';
 import { AccessType } from 'src/types';
 
 @Injectable()
 export class AccessGuard implements CanActivate {
  constructor(private readonly reflector: Reflector) {}
+
  canActivate(context: ExecutionContext): boolean {
-  const requiredAccess = this.reflector.get<AccessType[]>(
+  const requiredAccess = this.reflector.getAllAndOverride<AccessType[]>(
    'accessTypes',
-   context.getHandler(),
+   [context.getHandler(), context.getClass()],
   );
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const request = context.switchToHttp().getRequest();
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-  const userAccess = request['userAccess'];
+
+  if (!requiredAccess) return true;
+
+  const request = context.switchToHttp().getRequest<Request>();
+  const userAccess = request.userAccess;
 
   if (
-   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-   requiredAccess?.includes(userAccess) ||
-   userAccess === AccessType.SYSTEM_ADMIN
+   userAccess === AccessType.SYSTEM_ADMIN ||
+   requiredAccess.includes(userAccess as AccessType)
   )
    return true;
+
   throw new ForbiddenException();
  }
 }
