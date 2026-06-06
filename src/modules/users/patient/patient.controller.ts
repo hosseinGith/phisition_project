@@ -56,8 +56,12 @@ export class PatientController {
   return this.service.findActiveDoctors();
  }
  @Get('/doctors/search')
- search(@Query('q') q: string, @Query('specialty') specialty?: string) {
-  return this.service.search(q, specialty);
+ search(
+  @Req() request: Request,
+  @Query('q') q: string,
+  @Query('specialty') specialty?: string,
+ ) {
+  return this.service.search(q, request.user.id, specialty);
  }
  @Get('/doctors/:id')
  getDoctor(@Param('id') id: string) {

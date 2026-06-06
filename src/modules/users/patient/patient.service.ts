@@ -32,7 +32,7 @@ export class PatientService {
   private prescriptions: PrescriptionsService,
  ) {}
  async searchInPatientPrescriptions(userId: string) {
-  return await this.prescriptions.find({
+  return await this.prescriptions.findAll({
    where: {
     patient: {
      user: { id: userId },
@@ -71,7 +71,7 @@ export class PatientService {
   status: StatusPrescriptions | undefined,
   sortedBy: SortedByEnum | undefined,
  ) {
-  return await this.prescriptions.find({
+  return await this.prescriptions.findAll({
    order: {
     created_at: sortedBy
      ? sortedBy === SortedByEnum.OLDER
@@ -126,12 +126,24 @@ export class PatientService {
    },
   });
  }
- // public.service.ts
- async search(q: string, specialty?: string) {
-  const queryBuilder = this.users
-   .createQueryBuilder('users')
-   .leftJoinAndSelect('users.doctor', 'doctor')
-   .select(['first_name', 'specialty']);
+ async search(q: string, patientId: string, specialty?: string) {
+  const queryBuilder = this.patients
+   .createQueryBuilder('patient')
+   .leftJoinAndSelect('patient.appointments', 'appointment')
+   .leftJoin('appointment.doctor', 'doctor')
+   .leftJoin('doctor.user', 'user')
+   .where('patient.id = :patientId', { patientId })
+   .select([
+    'patient.id',
+    'appointment.id',
+    'appointment.appointment_date',
+    'appointment.status',
+    'doctor.id',
+    'doctor.bio',
+    'doctor.consultation_fee',
+    'user.first_name',
+    'user.last_name',
+   ]);
 
   if (q) {
    queryBuilder.andWhere(
