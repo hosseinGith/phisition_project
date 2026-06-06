@@ -10,7 +10,6 @@ import { Patients } from 'src/entitys/patients.entity';
 import PatientUpdateDto from './dtos/update.dto';
 import { StatusPrescriptions } from 'src/entitys/prescriptions.entity';
 import { SortedByEnum } from './types';
-import { Specialties } from 'src/entitys/specialties.entity';
 import { UsersService } from '../users.service';
 import { PrescriptionsService } from 'src/modules/prescriptions/prescriptions.service';
 
@@ -144,10 +143,11 @@ export class PatientService {
   }
 
   if (specialty) {
-   queryBuilder.andWhere('doctor.specialty = :specialty', { Specialties });
+   queryBuilder
+    .leftJoinAndSelect('doctor.specialties', 'specialty')
+    .andWhere('doctor.specialties = :specialty', { specialty });
   }
 
-  // فقط کاربرانی که دکتر هستند (دکتر دارند)
   queryBuilder.andWhere('doctor.id IS NOT NULL');
 
   return await queryBuilder.getMany();
