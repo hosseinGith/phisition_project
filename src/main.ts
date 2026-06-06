@@ -34,7 +34,7 @@ async function bootstrap() {
   .addBearerAuth()
   .build();
  const document = SwaggerModule.createDocument(app, config, {
-  extraModels: [AuditLogsMedical], // مدل‌های اضافی
+  extraModels: [AuditLogsMedical],
  });
  SwaggerModule.setup('/documentation', app, document, {
   swaggerOptions: {
