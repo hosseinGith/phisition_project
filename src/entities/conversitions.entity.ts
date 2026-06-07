@@ -14,17 +14,17 @@ import { Messages } from './messages.entity';
 @Entity()
 export class Conversitions {
  @PrimaryColumn()
- id: string;
+ id!: string;
  @BeforeInsert()
  private generateId() {
   this.id = nanoid();
  }
  @ManyToOne(() => Patients)
- patient: Patients;
+ patient!: Patients;
  @ManyToOne(() => Doctors)
- doctor: Doctors;
+ doctor!: Doctors;
  @OneToMany(() => Messages, (message) => message.conversition)
- messages: Messages[];
+ messages!: Messages[];
  @Column()
- roomId: string;
+ roomId!: string;
 }

@@ -17,17 +17,17 @@ enum ChatRequestStatusEnum {
 @Entity()
 export class ChatRequests {
  @PrimaryColumn()
- id: string;
+ id!: string;
  @BeforeInsert()
  private generateId() {
   this.id = nanoid();
  }
  @ManyToOne(() => Patients, (patients) => patients.chatRequests)
- patient: Patients;
+ patient!: Patients;
  @ManyToOne(() => Doctors, (doctor) => doctor.chatRequests)
- doctor: Doctors;
+ doctor!: Doctors;
  @Column({ default: ChatRequestStatusEnum.WAITING })
- status: ChatRequestStatusEnum;
+ status!: ChatRequestStatusEnum;
  @Column()
- roomId: string;
+ roomId!: string;
 }
