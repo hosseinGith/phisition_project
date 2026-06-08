@@ -34,7 +34,7 @@ export class DoctorService {
   return this.doctors.findOneBy({ id });
  }
  async findAll() {
-  return this.doctors.find({ select: ['doctorHours'] });
+  return this.doctors.find();
  }
  async searchDoctors(q: string = '', specialty: string = '') {
   const queryBuilder = this.doctors
@@ -97,7 +97,6 @@ export class DoctorService {
    {
     appointment_date: true,
     created_at: true,
-    hour: true,
     id: true,
     patient: {
      allergies: true,
