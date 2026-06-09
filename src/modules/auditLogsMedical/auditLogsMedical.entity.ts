@@ -6,7 +6,7 @@ import {
  CreateDateColumn,
  ManyToOne,
 } from 'typeorm';
-import { nanoid } from 'nanoid';
+
 
 import { Patients } from '../users/patient/patients.entity';
 import { Users } from '../users/users.entity';
@@ -22,7 +22,9 @@ export class AuditLogsMedical {
  @PrimaryColumn()
  id!: string;
  @BeforeInsert()
- private generateId() {
+
+ private async generateId() {
+  const { nanoid } = await import('nanoid');
   this.id = nanoid();
  }
  // چه کسی دسترسی داشته

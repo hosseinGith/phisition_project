@@ -6,7 +6,7 @@ import {
  BeforeInsert,
  CreateDateColumn,
 } from 'typeorm';
-import { nanoid } from 'nanoid';
+
 
 import { Patients } from '../users/patient/patients.entity';
 import { Appointments } from '../appointments/appointments.entity';
@@ -22,7 +22,9 @@ export class Prescriptions {
  id!: string;
 
  @BeforeInsert()
- private generateId() {
+
+ private async generateId() {
+  const { nanoid } = await import('nanoid');
   this.id = nanoid();
  }
  // ارجاع به Patients

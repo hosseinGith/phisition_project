@@ -8,7 +8,6 @@ import {
  CreateDateColumn,
  OneToOne,
 } from 'typeorm';
-import { nanoid } from 'nanoid';
 
 import { Doctors } from './doctor/entities/doctors.entity';
 import { Patients } from './patient/patients.entity';
@@ -18,7 +17,8 @@ export class Users {
  @PrimaryColumn()
  id!: string;
  @BeforeInsert()
- private generateId() {
+ private async generateId() {
+  const { nanoid } = await import('nanoid');
   this.id = nanoid();
  }
  @Column({ unique: true })

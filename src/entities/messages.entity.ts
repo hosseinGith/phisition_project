@@ -9,7 +9,7 @@ import {
  JoinColumn,
  UpdateDateColumn,
 } from 'typeorm';
-import { nanoid } from 'nanoid';
+
 
 import { Users } from '../modules/users/users.entity';
 import { Conversitions } from './conversitions.entity';
@@ -24,7 +24,9 @@ export class Messages {
  @PrimaryColumn()
  id!: string;
  @BeforeInsert()
- private generateId() {
+
+ private async generateId() {
+  const { nanoid } = await import('nanoid');
   this.id = nanoid();
  }
  @ManyToOne(() => Users)

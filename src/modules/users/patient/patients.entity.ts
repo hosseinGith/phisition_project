@@ -7,7 +7,7 @@ import {
  JoinColumn,
  OneToMany,
 } from 'typeorm';
-import { nanoid } from 'nanoid';
+
 
 import { Users } from '../users.entity';
 import { randomInt } from 'node:crypto';
@@ -19,7 +19,9 @@ export class Patients {
  @PrimaryColumn()
  id!: string;
  @BeforeInsert()
- private generateId() {
+
+ private async generateId() {
+  const { nanoid } = await import('nanoid');
   this.id = nanoid();
  }
  // ارجاع به Users

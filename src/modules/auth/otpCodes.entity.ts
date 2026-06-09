@@ -1,12 +1,14 @@
 import { BeforeInsert, Column, Entity, PrimaryColumn } from 'typeorm';
-import { nanoid } from 'nanoid';
+
 
 @Entity()
 export class OtpCodes {
  @PrimaryColumn()
  id!: string;
  @BeforeInsert()
- private generateId() {
+
+ private async generateId() {
+  const { nanoid } = await import('nanoid');
   this.id = nanoid();
  }
  @Column({ length: process.env.OTP_CODE_LENGTH || 5 })

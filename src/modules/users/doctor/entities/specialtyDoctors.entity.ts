@@ -1,4 +1,4 @@
-import { nanoid } from 'nanoid';
+
 import { Entity, PrimaryColumn, BeforeInsert, ManyToOne } from 'typeorm';
 import { Doctors } from './doctors.entity';
 import { Specialties } from './specialties.entity';
@@ -8,7 +8,9 @@ export class SpecialtyDoctors {
  @PrimaryColumn()
  id!: string;
  @BeforeInsert()
- private generateId() {
+
+ private async generateId() {
+  const { nanoid } = await import('nanoid');
   this.id = nanoid();
  }
  @ManyToOne(() => Doctors, (doctor) => doctor.specialties)

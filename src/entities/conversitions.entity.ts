@@ -6,7 +6,6 @@ import {
  OneToMany,
  Column,
 } from 'typeorm';
-import { nanoid } from 'nanoid';
 
 import { Patients } from '../modules/users/patient/patients.entity';
 import { Doctors } from '../modules/users/doctor/entities/doctors.entity';
@@ -16,7 +15,8 @@ export class Conversitions {
  @PrimaryColumn()
  id!: string;
  @BeforeInsert()
- private generateId() {
+ private async generateId() {
+  const { nanoid } = await import('nanoid');
   this.id = nanoid();
  }
  @ManyToOne(() => Patients)

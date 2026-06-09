@@ -5,7 +5,7 @@ import {
  Column,
  ManyToOne,
 } from 'typeorm';
-import { nanoid } from 'nanoid';
+
 
 import { Users } from '../modules/users/users.entity';
 enum UseTypeEnum {
@@ -18,7 +18,9 @@ export class Files {
  @PrimaryColumn()
  id!: string;
  @BeforeInsert()
- private generateId() {
+
+ private async generateId() {
+  const { nanoid } = await import('nanoid');
   this.id = nanoid();
  }
  @Column()

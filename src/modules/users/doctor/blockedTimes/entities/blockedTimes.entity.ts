@@ -5,7 +5,7 @@ import {
  ManyToOne,
  PrimaryColumn,
 } from 'typeorm';
-import { nanoid } from 'nanoid';
+
 
 import { Doctors } from '../../entities/doctors.entity';
 @Entity('doctorBlockedTimes')
@@ -13,7 +13,9 @@ export class BlockedTimes {
  @PrimaryColumn()
  id!: string;
  @BeforeInsert()
- private generateId() {
+
+ private async generateId() {
+  const { nanoid } = await import('nanoid');
   this.id = nanoid();
  }
  @ManyToOne(() => Doctors, (doctor) => doctor.BlockedTimes)
