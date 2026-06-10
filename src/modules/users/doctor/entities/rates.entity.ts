@@ -8,7 +8,7 @@ import {
 
 
 import { Doctors } from './doctors.entity';
-import { Patients } from '../../patient/patients.entity';
+import { Patients } from '../../patient/entities/patients.entity';
 
 @Entity()
 export class Rates {

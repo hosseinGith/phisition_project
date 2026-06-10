@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 
 
-import { Patients } from '../users/patient/patients.entity';
+import { Patients } from '../users/patient/entities/patients.entity';
 import { Users } from '../users/users.entity';
 export enum AccessTypeAuditLogsMedicalEnum {
  VIEW = 'view',

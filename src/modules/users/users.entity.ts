@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 
 import { Doctors } from './doctor/entities/doctors.entity';
-import { Patients } from './patient/patients.entity';
+import { Patients } from './patient/entities/patients.entity';
 
 @Entity()
 export class Users {

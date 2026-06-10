@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 
 
-import { Patients } from '../users/patient/patients.entity';
+import { Patients } from '../users/patient/entities/patients.entity';
 import { Appointments } from '../appointments/appointments.entity';
 export enum StatusPrescriptions {
  ACTIVE = 'active',

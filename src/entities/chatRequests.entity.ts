@@ -6,7 +6,7 @@ import {
  Column,
 } from 'typeorm';
 
-import { Patients } from '../modules/users/patient/patients.entity';
+import { Patients } from '../modules/users/patient/entities/patients.entity';
 import { Doctors } from '../modules/users/doctor/entities/doctors.entity';
 enum ChatRequestStatusEnum {
  REJECTED = 'rejected',

@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Patients } from 'src/modules/users/patient/patients.entity';
+import { Patients } from 'src/modules/users/patient/entities/patients.entity';
 import { Users } from 'src/modules/users/users.entity';
 import { Repository } from 'typeorm';
 import LoginDto from './dtos/login.dto';
