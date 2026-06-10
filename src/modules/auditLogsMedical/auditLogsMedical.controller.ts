@@ -4,7 +4,7 @@ import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import { AuthGuard } from 'src/shared/guards/auth.guard';
 import { AccessType } from 'src/types';
 import AuditLogsMedicalDtoAdd from './dtos/auditLogsMedical-add.dto';
-import { AuditLogsMedical } from 'src/modules/auditLogsMedical/auditLogsMedical.entity';
+import { AuditLogsMedical } from 'src/modules/auditLogsMedical/entities/auditLogsMedical.entity';
 import { Access } from 'src/shared/decorators/access.decorator';
 import { AccessGuard } from 'src/shared/guards/access.guard';
 @Controller('/api/auditLogsMedical')
