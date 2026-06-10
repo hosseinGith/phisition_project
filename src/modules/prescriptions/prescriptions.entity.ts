@@ -9,7 +9,7 @@ import {
 
 
 import { Patients } from '../users/patient/entities/patients.entity';
-import { Appointments } from '../appointments/appointments.entity';
+import { Appointments } from '../appointments/entities/appointments.entity';
 export enum StatusPrescriptions {
  ACTIVE = 'active',
  DISPENSED = 'dispensed',
