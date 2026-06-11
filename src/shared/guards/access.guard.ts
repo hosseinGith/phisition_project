@@ -17,16 +17,19 @@ export class AccessGuard implements CanActivate {
    'accessTypes',
    [context.getHandler(), context.getClass()],
   );
-
-  if (!requiredAccess) return true;
+  const skipAuth = this.reflector?.get<boolean>(
+   'skip-auth',
+   context.getHandler(),
+  );
 
   const request = context.switchToHttp().getRequest<Request>();
   const userAccess = request.userAccess as AccessType;
 
   if (
    userAccess === AccessType.SYSTEM_ADMIN ||
-   userAccess === AccessType.PUBLIC ||
-   requiredAccess.includes(userAccess as AccessType)
+   requiredAccess.includes(AccessType.PUBLIC) ||
+   requiredAccess.includes(userAccess as AccessType) ||
+   skipAuth
   )
    return true;
 
