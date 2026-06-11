@@ -7,12 +7,10 @@ import {
 import { AuditLogsService } from 'src/modules/auditLogs/auditLogs.service';
 import { DoctorService } from '../services/doctor.service';
 import { Observable, tap } from 'rxjs';
-import {
- AuditLogsActionEnum,
- AuditLogsTargetTypeEnum,
-} from 'src/modules/auditLogs/entities/auditLogs.entity';
+import { AuditLogsTargetTypeEnum } from 'src/modules/auditLogs/entities/auditLogs.entity';
 import type { Request } from 'express';
 import getIp from 'src/shared/utils/getIp';
+import getAuditLogAction from 'src/shared/utils/getAuditLogAction';
 @Injectable()
 export class AuditLogInterceptor implements NestInterceptor {
  constructor(
@@ -31,7 +29,7 @@ export class AuditLogInterceptor implements NestInterceptor {
      });
      const ip = getIp(request);
      void this.auditLogs.create({
-      action: this.getAction(request.method),
+      action: getAuditLogAction(request.method),
       ipAddress: ip,
       user: doctor.user,
       targetType: AuditLogsTargetTypeEnum.APPOINTMENT,
@@ -41,18 +39,5 @@ export class AuditLogInterceptor implements NestInterceptor {
     return data;
    }),
   );
- }
-
- private getAction(method: string): AuditLogsActionEnum {
-  switch (method) {
-   case 'GET':
-    return AuditLogsActionEnum.VIEW;
-   case 'POST':
-    return AuditLogsActionEnum.CREATE;
-   case 'PATCH':
-    return AuditLogsActionEnum.UPDATE;
-   case 'DELETE':
-    return AuditLogsActionEnum.DELETE;
-  }
  }
 }
