@@ -56,8 +56,11 @@ export class AppointmentsService {
   if (!res) throw new NotFoundException();
   return res;
  }
- async findAll(select?: FindOptionsSelect<Appointments>) {
-  const res = await this.appointments.find({ select: select });
+ async findAll(
+  select?: FindOptionsSelect<Appointments>,
+  where?: FindOptionsWhere<Appointments> | FindOptionsWhere<Appointments>[],
+ ) {
+  const res = await this.appointments.find({ select, where });
   return res;
  }
 

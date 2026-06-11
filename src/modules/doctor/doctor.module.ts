@@ -10,6 +10,7 @@ import { UsersModule } from '../users/users.module';
 import { BlockedTimesModule } from './blockedTimes/blockedTimes.module';
 import { DoctorsAppointmentService } from './services/doctors-appointments.service';
 import { DoctorsSettings } from './entities/settings.entity';
+import { AuditLogsModule } from '../auditLogs/auditLogs.module';
 @Module({
  imports: [
   TypeOrmModule.forFeature([
@@ -21,6 +22,7 @@ import { DoctorsSettings } from './entities/settings.entity';
   forwardRef(() => UsersModule),
   forwardRef(() => AppointmentsModule),
   forwardRef(() => BlockedTimesModule),
+  forwardRef(() => AuditLogsModule),
  ],
  controllers: [DoctorController],
  providers: [DoctorService, DoctorsAppointmentService],
