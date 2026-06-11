@@ -4,6 +4,11 @@ import { Doctors } from 'src/modules/doctor/entities/doctors.entity';
 import { AppointmentsService } from '../../appointments/services/appointments.service';
 import { DoctorService } from 'src/modules/doctor/services/doctor.service';
 import { UpdateDoctorsAppointments } from '../dto/update-doctors-appointments.dto';
+import { AuditLogsService } from 'src/modules/auditLogs/auditLogs.service';
+import {
+ AuditLogsActionEnum,
+ AuditLogsTargetTypeEnum,
+} from 'src/modules/auditLogs/entities/auditLogs.entity';
 
 @Injectable()
 export class DoctorsAppointmentService {
@@ -11,6 +16,7 @@ export class DoctorsAppointmentService {
   @InjectRepository(Doctors) private readonly doctorRepository: Doctors,
   private readonly doctorService: DoctorService,
   private readonly appointments: AppointmentsService,
+  private readonly auditLogs: AuditLogsService,
  ) {}
  findAll(userId: string) {
   const appointments = this.appointments.findOneByOption({
@@ -18,6 +24,13 @@ export class DoctorsAppointmentService {
     doctor: { user: { id: userId } },
    },
   });
+  return appointments;
+ }
+ async getDoctorAppointment(userId: string) {
+  const appointments = await this.appointments.findAll(undefined, {
+   doctor: { user: { id: userId } },
+  });
+
   return appointments;
  }
  findOne(id: string, userId: string) {
@@ -31,11 +44,18 @@ export class DoctorsAppointmentService {
  }
  async update(id: string, body: UpdateDoctorsAppointments, userId: string) {
   // check user id  according to appointment
-  const checkAppointmentUserId = await this.appointments.findOneByOption({
+  const oldAppointment = await this.appointments.findOneByOption({
    where: { id, doctor: { user: { id: userId } } },
+   relations: ['doctor'],
   });
-  if (!checkAppointmentUserId)
+  if (!oldAppointment)
    throw new BadRequestException('این شناسه نوبت با هیچ نوبتی مطابقت ندارد.');
+
+  // send only body key
+  const noneInBody = {};
+  Object.keys(oldAppointment).forEach((key) => {
+   if (!(key in body)) noneInBody[key] = undefined;
+  });
   const updateStatus = await this.appointments.update(id, {
    ...body,
   });

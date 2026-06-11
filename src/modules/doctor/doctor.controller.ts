@@ -24,6 +24,7 @@ import { AccessGuard } from 'src/shared/guards/access.guard';
 import SkipAuth from '../../shared/decorators/skip-auth.decorator';
 import { DoctorsAppointmentService } from './services/doctors-appointments.service';
 import { UpdateDoctorsAppointments } from './dto/update-doctors-appointments.dto';
+import { AuditLogInterceptor } from './interceptors/log.interceptor';
 
 @Controller('/api/doctor')
 @UsePipes(HashUserData)
@@ -53,21 +54,23 @@ export class DoctorController {
  // doctor appointments control
  @ApiTags('Doctor-appointments')
  @Get('/appointments/:id')
- getDoctorAppointments(@Param('id') id: string, @Req() request: Request) {
+ getDoctorAppointment(@Param('id') id: string, @Req() request: Request) {
   return this.doctorAppointmentsService.findOne(id, request.user.id);
  }
  @ApiTags('Doctor-appointments')
+ @UseInterceptors(AuditLogInterceptor)
  @Get('/appointments/')
- getDoctorAppointment(@Req() request: Request) {
-  return this.doctorAppointmentsService.findAll(request.user.id);
+ getDoctorAppointments(@Req() request: Request) {
+  return this.doctorAppointmentsService.getDoctorAppointment(request.user.id);
  }
  // change appointment status
  @ApiTags('Doctor-appointments')
+ @UseInterceptors(AuditLogInterceptor)
  @Patch('/appointments/:id')
  updateAppointmentStatus(
   @Param('id') id: string,
-  @Req() request: Request,
   @Body() body: UpdateDoctorsAppointments,
+  @Req() request: Request,
  ) {
   return this.doctorAppointmentsService.update(id, body, request.user.id);
  }

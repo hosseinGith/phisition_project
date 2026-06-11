@@ -8,14 +8,14 @@ import {
 } from 'typeorm';
 
 import { Users } from '../../users/entities/users.entity';
-export enum ActionEnum {
+export enum AuditLogsActionEnum {
  CREATE = 'create',
  UPDATE = 'update',
  DELETE = 'delete',
  VIEW = 'view',
  ACCESS_DENIED = 'access_denied',
 }
-export enum TargetTypeEnum {
+export enum AuditLogsTargetTypeEnum {
  PATIENT = 'patient',
  DOCTOR = 'doctor',
  APPOINTMENT = 'appointment',
@@ -31,24 +31,24 @@ export class AuditLogs {
   this.id = nanoid();
  }
  @ManyToOne(() => Users)
- userId!: Users;
+ user!: Users;
  @Column({ nullable: true })
- targetId: number;
+ targetId?: string;
 
- @Column({ type: 'enum', enum: TargetTypeEnum })
- targetType: TargetTypeEnum;
+ @Column({ type: 'enum', enum: AuditLogsTargetTypeEnum })
+ targetType: AuditLogsTargetTypeEnum;
 
- @Column({ type: 'enum', enum: ActionEnum })
- action: ActionEnum;
+ @Column({ type: 'enum', enum: AuditLogsActionEnum })
+ action: AuditLogsActionEnum;
 
  @Column({ type: 'text', nullable: true })
- oldValue: string;
+ oldValue?: string;
  @Column({ type: 'text', nullable: true })
- newValue: string;
+ newValue?: string;
  @Column({ nullable: true })
- ipAddress: string;
+ ipAddress?: string;
  @Column({ nullable: true })
- userAgent: string;
+ userAgent?: string;
  @CreateDateColumn()
  createdAt: Date;
 }
