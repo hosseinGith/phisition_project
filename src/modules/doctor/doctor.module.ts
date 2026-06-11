@@ -8,15 +8,22 @@ import { SpecialtyDoctors } from 'src/modules/doctor/entities/specialtyDoctors.e
 import { AppointmentsModule } from 'src/modules/appointments/appointments.module';
 import { UsersModule } from '../users/users.module';
 import { BlockedTimesModule } from './blockedTimes/blockedTimes.module';
+import { DoctorsAppointmentService } from './services/doctors-appointments.service';
+import { DoctorsSettings } from './entities/settings.entity';
 @Module({
  imports: [
-  TypeOrmModule.forFeature([Doctors, Specialties, SpecialtyDoctors]),
+  TypeOrmModule.forFeature([
+   Doctors,
+   DoctorsSettings,
+   Specialties,
+   SpecialtyDoctors,
+  ]),
   forwardRef(() => UsersModule),
   forwardRef(() => AppointmentsModule),
   forwardRef(() => BlockedTimesModule),
  ],
  controllers: [DoctorController],
- providers: [DoctorService],
+ providers: [DoctorService, DoctorsAppointmentService],
  exports: [DoctorService],
 })
 export class DoctorModule {}

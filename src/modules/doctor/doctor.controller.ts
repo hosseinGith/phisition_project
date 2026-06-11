@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { DoctorService } from './services/doctor.service';
 import AddDoctorDto from './dtos/add.dto';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/shared/guards/auth.guard';
 import { AccessType } from 'src/types';
 import { HashUserData } from 'src/shared/pipes/hash-user-data.pipe';
@@ -21,55 +21,68 @@ import { DecryptUserData } from 'src/shared/interceptors/decrypt-user-data.inter
 import type { Request } from 'express';
 import { Access } from 'src/shared/decorators/access.decorator';
 import { AccessGuard } from 'src/shared/guards/access.guard';
-import SkipAuth from 'src/shared/decorators/skip-auth.decorator';
+import SkipAuth from '../../shared/decorators/skip-auth.decorator';
+import { DoctorsAppointmentService } from './services/doctors-appointments.service';
+import { UpdateDoctorsAppointments } from './dtos/update-doctors-appointments.dto';
 
+@Controller('/api/doctor')
 @UsePipes(HashUserData)
 @UseInterceptors(DecryptUserData)
 @ApiBearerAuth()
-@Controller('/api/doctor')
+@Access(AccessType.DOCTOR)
+@UseGuards(AuthGuard, AccessGuard)
 export class DoctorController {
- constructor(private readonly service: DoctorService) {}
- @Get('/public/search')
- search(@Query('q') q?: string, @Query('specialty') specialty?: string) {
-  return this.service.searchDoctors(q, specialty);
- }
- @Get('/public/specialties')
- specialties() {
-  return this.service.getAllSpecialties();
- }
- @Get('/doctors/:id')
- getDoctor(@Param('id') id: string) {
-  return this.service.getDoctorDetails(id);
- }
-
- @Access(AccessType.DOCTOR)
- @UseGuards(AuthGuard, AccessGuard)
+ constructor(
+  private readonly mainService: DoctorService,
+  private readonly doctorAppointmentsService: DoctorsAppointmentService,
+ ) {}
+ //  doctor access
  @Get('/profile')
  getProfile(@Req() request: Request) {
   if (!request.user?.id) throw new NotFoundException();
-  return this.service.getProfile(request.user.id);
+  return this.mainService.getProfile(request.user.id);
  }
-
- @Access(AccessType.DOCTOR)
- @UseGuards(AuthGuard, AccessGuard)
- @Get('/my_appointments')
- getDoctorAppointments(@Req() request: Request) {
-  const userId = request.user?.id;
-  if (!userId) throw new NotFoundException();
-  return this.service.getDoctorAppointments(userId);
- }
-
- @Access(AccessType.DOCTOR)
- @UseGuards(AuthGuard, AccessGuard)
- @SkipAuth()
  @Get(':id')
  findOne(@Param('id') id: string) {
-  return this.service.findOne({ id });
+  return this.mainService.findOne({ id });
  }
- @Access(AccessType.DOCTOR)
- @UseGuards(AuthGuard, AccessGuard)
  @Patch(':id')
  update(@Param() id: string, @Body() body: AddDoctorDto) {
-  return this.service.update(id, body);
+  return this.mainService.update(id, body);
+ }
+ // doctor appointments control
+ @ApiTags('Doctor-appointments')
+ @Get('/appointments/:id')
+ getDoctorAppointments(@Param('id') id: string, @Req() request: Request) {
+  return this.doctorAppointmentsService.findOne(id, request.user.id);
+ }
+ @ApiTags('Doctor-appointments')
+ @Get('/appointments/')
+ getDoctorAppointment(@Req() request: Request) {
+  return this.doctorAppointmentsService.findAll(request.user.id);
+ }
+ // change appointment status
+ @ApiTags('Doctor-appointments')
+ @Patch('/appointments/:id')
+ updateAppointmentStatus(
+  @Param('id') id: string,
+  @Req() request: Request,
+  @Body() body: UpdateDoctorsAppointments,
+ ) {
+  return this.doctorAppointmentsService.update(id, body, request.user.id);
+ }
+
+ //  public access
+ @ApiTags('Doctor-public')
+ @SkipAuth()
+ @Get('/public/search')
+ search(@Query('q') q?: string, @Query('specialty') specialty?: string) {
+  return this.mainService.searchDoctors(q, specialty);
+ }
+ @ApiTags('Doctor-public')
+ @SkipAuth()
+ @Get('/public/specialties')
+ specialties() {
+  return this.mainService.getAllSpecialties();
  }
 }

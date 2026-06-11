@@ -8,7 +8,6 @@ import {
  OneToMany,
 } from 'typeorm';
 
-
 import { Users } from '../../users/entities/users.entity';
 
 import { Rates } from './rates.entity';
@@ -16,13 +15,13 @@ import { ChatRequests } from '../../../entities/chatRequests.entity';
 import { SpecialtyDoctors } from './specialtyDoctors.entity';
 
 import { BlockedTimes } from '../blockedTimes/entities/blockedTimes.entity';
+import { DoctorsSettings } from './settings.entity';
 
 @Entity()
 export class Doctors {
  @PrimaryColumn()
  id!: string;
  @BeforeInsert()
-
  private async generateId() {
   const { nanoid } = await import('nanoid');
   this.id = nanoid();
@@ -35,6 +34,8 @@ export class Doctors {
  @OneToMany(() => BlockedTimes, (BlockedTime) => BlockedTime.doctor)
  BlockedTimes!: BlockedTimes[];
 
+ @OneToOne(() => DoctorsSettings, (doctorsSettings) => doctorsSettings.doctor)
+ DoctorsSettings: DoctorsSettings;
  @OneToMany(() => Rates, (rate) => rate.doctor)
  rates!: Rates[];
  @OneToMany(() => ChatRequests, (chatRequest) => chatRequest.doctor)

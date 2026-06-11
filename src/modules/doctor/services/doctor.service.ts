@@ -20,12 +20,14 @@ import AddDoctorDto from '../dtos/add.dto';
 import { Specialties } from 'src/modules/doctor/entities/specialties.entity';
 import { UsersService } from '../../users/users.service';
 import { AppointmentsService } from 'src/modules/appointments/services/appointments.service';
-
+import { DoctorsSettings } from '../entities/settings.entity';
 @Injectable()
 export class DoctorService {
  constructor(
   @InjectRepository(Doctors)
   private readonly doctors: Repository<Doctors>,
+  @InjectRepository(DoctorsSettings)
+  private readonly settings: Repository<DoctorsSettings>,
   @InjectRepository(Specialties)
   private readonly specialties: Repository<Specialties>,
   private readonly users: UsersService,
@@ -60,8 +62,6 @@ export class DoctorService {
    .createQueryBuilder('doctor')
    .leftJoinAndSelect('doctor.specialties', 'specialtyDoctor')
    .leftJoinAndSelect('specialtyDoctor.specialty', 'specialty')
-   .leftJoinAndSelect('doctor.doctorHours', 'doctorHours')
-   .leftJoinAndSelect('doctor.days', 'days')
    .leftJoinAndSelect('doctor.user', 'user')
    .addSelect(
     (qb) =>
@@ -106,7 +106,6 @@ export class DoctorService {
  async getAllSpecialties() {
   return this.specialties.find({ select: ['name', 'id'] });
  }
-
  async getDoctorAppointments(userId: string) {
   const user = await this.users.findOne(userId, ['doctor']);
   if (!user) throw new UnauthorizedException();
@@ -158,6 +157,15 @@ export class DoctorService {
    .getOne();
   if (!user) throw new NotFoundException();
   return user;
+ }
+ /**
+  * @internal
+  * don't use it for public api.
+  * use only inside services
+  *
+  */
+ getDoctorSettings(doctorId: string) {
+  return this.settings.findOneBy({ doctor: { id: doctorId } });
  }
  async update(id: string, body: AddDoctorDto) {
   if (!id) throw new BadRequestException('', 'id');
