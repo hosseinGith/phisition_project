@@ -12,7 +12,7 @@ import { Patients } from '../../patient/entities/patients.entity';
 import { Doctors } from '../../doctor/entities/doctors.entity';
 import { Prescriptions } from '../../prescriptions/entities/prescriptions.entity';
 export enum StatusAppointmentsEnum {
- SCHEDULED = 'scheduled',
+ PENDING = 'pending',
  COMPLETED = 'completed',
  CANCELLED = 'cancelled',
  NOSHOW = 'noShow',
@@ -51,7 +51,7 @@ export class Appointments {
  @Column({
   type: 'enum',
   enum: StatusAppointmentsEnum,
-  default: StatusAppointmentsEnum.SCHEDULED,
+  default: StatusAppointmentsEnum.PENDING,
  })
  status!: StatusAppointmentsEnum;
 
