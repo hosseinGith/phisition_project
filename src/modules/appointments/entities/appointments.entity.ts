@@ -11,13 +11,13 @@ import {
 import { Patients } from '../../patient/entities/patients.entity';
 import { Doctors } from '../../doctor/entities/doctors.entity';
 import { Prescriptions } from '../../prescriptions/entities/prescriptions.entity';
-export enum StatusAppointmentsEnum {
+export enum AppointmentStatusEnum {
  PENDING = 'pending',
+ ACCEPTED = 'accepted',
  COMPLETED = 'completed',
  CANCELLED = 'cancelled',
+ // When the patient does not appointment
  NOSHOW = 'noShow',
- //  does not have time
- TIME = 'time',
 }
 export enum VisitTypeAppointmentsEnum {
  INPERSON = 'inPerson',
@@ -50,11 +50,12 @@ export class Appointments {
 
  @Column({
   type: 'enum',
-  enum: StatusAppointmentsEnum,
-  default: StatusAppointmentsEnum.PENDING,
+  enum: AppointmentStatusEnum,
+  default: AppointmentStatusEnum.PENDING,
  })
- status!: StatusAppointmentsEnum;
-
+ status!: AppointmentStatusEnum;
+ @Column({ nullable: true })
+ cancelReason?: string;
  @Column({
   type: 'enum',
   enum: VisitTypeAppointmentsEnum,
