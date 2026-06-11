@@ -27,8 +27,7 @@ export class AuditLogsService {
   const create_status = this.AuditLogsRep.create({
    ...body,
   });
-  const auditLogsRep =
-   await this.AuditLogsRep.save(create_status);
-  return auditLogsRep;
+  const auditLogsMedicalRep = await this.AuditLogsRep.save(create_status);
+  return auditLogsMedicalRep;
  }
 }
