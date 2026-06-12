@@ -30,30 +30,11 @@ export class AppointmentsController {
  findOne(@Param('id') id: string) {
   return this.appointments.findOne(id);
  }
-
- @Access(AccessType.PATIENT)
- @Get('/patientAppointments')
- getPatientAppointments(@Req() request: Request) {
-  const userId = request.user?.id;
-  if (!userId) throw new NotFoundException();
-  return this.appointments.getPatientAppointments(userId);
- }
- @Get()
- findAll() {
-  return this.appointments.findAll();
- }
-
  @Post()
  create(@Body() body: AdminAppointmentsDtoAdd) {
   const { patientId, doctorId, ...appointmentData } = body;
   return this.appointments.create(patientId, doctorId, appointmentData);
  }
- @Access(AccessType.PATIENT)
- @Post('/patient/turn')
- createAppointment(@Body() body: ActiveTurn, @Req() request: Request) {
-  return this.appointments.createAppointment(body, request.user.id);
- }
-
  @Patch(':id')
  update(@Param('id') id: string, @Body() body: AppointmentsUpdateDto) {
   return this.appointments.update(id, body);
