@@ -14,10 +14,10 @@ import LoginDto from './dto/login.dto';
 import OtpDto from './dto/otp.dto';
 import { OtpCodes } from './entities/otpCodes.entity';
 
-import { CryptoHash } from 'src/shared/utils/cryptoHash.service';
+import { CryptoService } from '../../shared/services/cryptoHash.service';
 import { randomInt } from 'node:crypto';
 import { baseTimeOtpExpire } from 'src/shared/settings';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { TokenType } from 'src/types';
 import { UsersService } from '../users/users.service';
 
@@ -28,7 +28,7 @@ export class AuthService {
   @InjectRepository(OtpCodes)
   private readonly otpCodes: Repository<OtpCodes>,
   private readonly jwtService: JwtService,
-  private readonly cryptoHash: CryptoHash,
+  private readonly cryptoHash: CryptoService,
  ) {}
  createTokens(tokenConfig: any, response: Response) {
   try {

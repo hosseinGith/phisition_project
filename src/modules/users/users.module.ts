@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Users } from 'src/modules/users/entities/users.entity';
 import { PatientModule } from '../patient/patient.module';
 import { DoctorModule } from '../doctor/doctor.module';
+import { CryptoService } from 'src/shared/services/cryptoHash.service';
 
 @Module({
  imports: [
@@ -13,7 +14,7 @@ import { DoctorModule } from '../doctor/doctor.module';
   forwardRef(() => PatientModule),
  ],
  controllers: [UsersController],
- providers: [UsersService],
+ providers: [UsersService, CryptoService],
  exports: [UsersService],
 })
 export class UsersModule {}

@@ -1,9 +1,9 @@
-import { CryptoHash } from './cryptoHash.service';
+import { CryptoService } from '../services/cryptoHash.service';
 
 export default function safeDecrypt(
  encryptedValue: string | null | undefined,
 ): string | null {
- const cryptoHash = new CryptoHash();
+ const cryptoHash = new CryptoService();
  if (!encryptedValue) return null;
 
  // بررسی فرمت معتبر (شامل : باشد)
