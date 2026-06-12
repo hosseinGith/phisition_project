@@ -80,8 +80,11 @@ export class UsersService {
   return await this.users.findBy({ id });
  }
  async create(body: AdminAddUser) {
+  const hashedNumber = this.cryptoService.hashForSearch(
+   this.cryptoService.decrypt(body.user.number),
+  );
   const existingUser = await this.users.findOne({
-   where: { number: body.user.number },
+   where: { number_hash: hashedNumber },
   });
 
   if (existingUser) {
@@ -146,8 +149,11 @@ export class UsersService {
    national_id?: string;
   },
  ) {
+  const hashedNumber = this.cryptoService.hashForSearch(
+   this.cryptoService.decrypt(body?.number),
+  );
   if (body?.number)
-   if (await this.users.findOneBy({ number: body?.number }))
+   if (await this.users.findOneBy({ number_hash: hashedNumber }))
     throw new BadRequestException(
      'این نام کاربری استفاده شده است. لطفاً نام کاربری دیگری انتخاب کنید.',
      'number',

@@ -139,12 +139,6 @@ export class PatientService {
   return await queryBuilder.getMany();
  }
 
- async getProfile(userId: string) {
-  const user = await this.users.findOne(userId, ['patient']);
-
-  if (!user) throw new NotFoundException();
-  return user;
- }
  async update(body: PatientUpdateDto, userId: string) {
   const user = await this.users.findOne(userId, ['patient'], { patient: true });
 

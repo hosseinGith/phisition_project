@@ -116,10 +116,6 @@ export class PatientController {
   return this.patientService.search(q, request.user.id, specialty);
  }
 
- @Get('profile')
- getProfile(@Req() request: Request) {
-  return this.patientService.getProfile(request.user.id);
- }
 
  @Patch('/profile')
  update(@Body() body: PatientUpdateDto, @Req() request: Request) {

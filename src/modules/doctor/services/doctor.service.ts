@@ -35,11 +35,6 @@ export class DoctorService {
   @Inject(forwardRef(() => AppointmentsService))
   private readonly appointments: AppointmentsService,
  ) {}
- async getProfile(id: string): Promise<Doctors> {
-  const doctor = await this.doctors.findOneBy({ id });
-  if (!doctor) throw new NotFoundException('Doctor not found');
-  return doctor;
- }
  async findOne(
   where?: FindOptionsWhere<Doctors> | FindOptionsWhere<Doctors>[],
   relations?: FindOptionsRelationByString | FindOptionsRelations<Doctors>,

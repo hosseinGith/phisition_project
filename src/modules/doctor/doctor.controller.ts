@@ -38,11 +38,6 @@ export class DoctorController {
   private readonly doctorAppointmentsService: DoctorsAppointmentService,
  ) {}
  //  doctor access
- @Get('/profile')
- getProfile(@Req() request: Request) {
-  if (!request.user?.id) throw new NotFoundException();
-  return this.mainService.getProfile(request.user.id);
- }
  @Get(':id')
  findOne(@Param('id') id: string) {
   return this.mainService.findOne({ id });

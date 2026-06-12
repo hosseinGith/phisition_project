@@ -28,26 +28,32 @@ export class AuthGuard implements CanActivate {
 
   const token = String(request.headers?.authorization).split(' ')[1];
   if (!token) throw new UnauthorizedException();
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-  const res = (await this.jwtService.verify(token)) as TokenType;
+  console.log(token);
+  
+  try {
+   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+   const res = (await this.jwtService.verify(token)) as TokenType;
 
-  if (res?.id) {
-   const user = await this.users.findOne(
-    res?.id,
-    ['doctor', 'patient'],
-    undefined,
-    false,
-   );
-   if (!user) throw new UnauthorizedException();
-
-   if (!user?.is_active)
-    throw new ForbiddenException(
-     'اکانت شما فعال نشده است. تا فعال شدن آن منتظر بمونید.',
+   if (res?.id) {
+    const user = await this.users.findOne(
+     res?.id,
+     ['doctor', 'patient'],
+     undefined,
+     false,
     );
-   request['userAccess'] = user?.access || '';
-   request.user = user;
+    if (!user) throw new UnauthorizedException();
 
-   return true;
-  } else throw new UnauthorizedException();
+    if (!user?.is_active)
+     throw new ForbiddenException(
+      'اکانت شما فعال نشده است. تا فعال شدن آن منتظر بمونید.',
+     );
+    request['userAccess'] = user?.access || '';
+    request.user = user;
+
+    return true;
+   }
+  } catch {
+   throw new UnauthorizedException();
+  }
  }
 }
